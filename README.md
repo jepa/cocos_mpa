@@ -61,5 +61,5 @@ This project is a sub-component of a larger project and will be integrated with 
 
 ## Topics to discuss further
 - **Area of study**, How far we are limiting the region
-- D0 we want a no-mpa scenario? 
-  
+- Do we want a no-mpa scenario?
+- Report in English or Spanish?
