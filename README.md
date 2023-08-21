@@ -51,9 +51,15 @@ This project is a sub-component of a larger project and will be integrated with 
 - AMM, FMSY0.60
 - Everything esle F = 1.5MSY
 
-- **Re-dristribution of F effort**, Carry a sensitivity analysis on re distribution of effort within the PN MPA:
-- - Only the perimeter (as in NE Atrlntic case)
-- - All grid cells of MPA
+## Overall details
+
+- **Re-dristribution of F effort**, a sensitivity analysis on re distribution of effort within the PN MPA:
+  - Only the perimeter (as in NE Atlantic case)
+  - All grid cells of MPA
 - ** Getting species list**, ge a list of important species to model, mostly tunas, sharks and billfishes
 - ** Understand what is the *F effort* of the region using IATTC parameters and data or literature
+
+## Topics to discuss further
+- **Area of study**, How far we are limiting the region
+- D0 we want a no-mpa scenario? 
   
