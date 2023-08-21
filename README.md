@@ -2,7 +2,10 @@
 Repository for project on Isla Cocos and Bicentenario in Costa Rica with MarViva
 
 # Authors
-Juliano Palacios Abrantes, Sarah M. Roberts, Tayler M. Clarke
+^1^Juliano Palacios Abrantes, ^2^Sarah M. Roberts, ^1^Tayler M. Clarke
+
+^1^Changing Oceans Research Unit, The University of British Columbia, Vancouver, BC, Canada
+^2^University of North Carolina at Chapel Hill, CITY, NC, United States
 
 # Objectives
 - Understand the role of Cocos National Park (PNC) and Marine Area Bicentenario (AMM) in the protection of highly migratory and commercialy important fish species.
