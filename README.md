@@ -1,4 +1,4 @@
-# Cliamte change and fisheries on the Parque Nacional de Cocos, COsta Rica
+# Cliamte change and fisheries on the Parque Nacional de Cocos, Costa Rica
 Repository for project on Isla Cocos and Bicentenario in Costa Rica with MarViva
 
 # Authors
