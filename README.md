@@ -45,7 +45,7 @@ This project is a sub-component of a larger project and will be integrated with 
 - AMM, FMSY
 - Everything esle F = 1.5MSY
 
-- ### Scenario 3 (IUU inclined)
+### Scenario 3 (IUU inclined)
 - PNC, 90% MPA original and expansion
 - AMM, FMSY0.60
 - Everything esle F = 1.5MSY
