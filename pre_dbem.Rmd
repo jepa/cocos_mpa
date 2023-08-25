@@ -1,0 +1,116 @@
+---
+title: "pred_dbem"
+author: "Sarah Roberts & Juliano Palacios Abrantes"
+date: "2023-08-24"
+output: html_document
+---
+
+```{r setup, include = F}
+source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
+
+load_pkg(c(
+  # For grid estimation and species selection
+  "spatialEco","tidyverse", "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
+  # For collaborative ease
+  "here"
+  ))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+```
+
+#1 Grid identification 
+##1.1 Load in the mpa data and check crs information
+```{r}
+ammb <- read_sf((here("data/spatial/ammb/AMM_Bicentenario_CostaRica.shp")))
+plot(ammb)
+
+#get out coordinate reference system information 
+st_crs(ammb)
+st_crs(ammb)$epsg
+
+crs <- st_crs(ammb) #this is a costa rica specific epsg with WGS 84 datum
+
+
+coco <- read_sf((here("data/spatial/coco/PN_IslaCoco_CostaRica.shp")))
+plot(coco)
+st_crs(coco)
+st_crs(coco)$epsg #this is in a UTM coordinate reference system for the costa rica area 
+
+#lets have them both in the WGS one 
+
+coco <- st_transform(coco, crs)
+st_crs(coco)
+
+#plot them both to make sure it looks correct 
+ggplot() + geom_sf(data = ammb, colour = "blue") + geom_sf(data = coco, colour = "red") 
+```
+
+##1.2 Load in grid data
+```{r}
+grid <- read_sf(here("./data/spatial/grid/worldsq_EA.shp"))
+grid <- grid %>% filter(Lat < 10 & Lat > 0 & Lon > -92 & Lon < -82)
+
+grid <- st_transform(grid, crs = st_crs(crs)) %>% 
+  filter(PWater > 0)
+
+ggplot() + geom_sf(data = ammb, colour = "blue")+ geom_sf(data = coco, colour = "red") 
+
+ggplot() + geom_sf(data = grid) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+```
+
+##1.3 Identify grids that are MPAs or surrounding an MPA
+```{r}
+
+#coco 
+grid_intersection <- st_intersection(grid, coco) %>%
+  group_by(Seq) %>%
+  summarise(geom = st_union(geometry)) %>%
+  mutate(geom = st_sfc(geom),
+         area = st_area(geom))
+grid_intersection$status <- "protected_coco" #lets us know that those grid cells have some level of MPA within them 
+
+#join this back to the big grid (right now we just have the gridIDs that are overlapping an MPA)
+grid_intersection <- as.data.frame(grid_intersection)
+
+grid2 <- as.data.frame(grid)
+grid2 <- left_join(grid2, grid_intersection, by = "Seq")
+grid2$protected_area_coco_m2  <- as.numeric(grid2$area)
+grid2 <- grid2 %>% dplyr::select(-geom)
+grid2 <- st_as_sf(grid2)
+
+ggplot() + geom_sf(data = grid2, aes(fill = protected_area_coco_m2)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+
+#ammb 
+grid_intersection2 <- st_intersection(grid, ammb) %>%
+  group_by(Seq) %>%
+  summarise(geom = st_union(geometry)) %>%
+  mutate(geom = st_sfc(geom),
+         area = st_area(geom))
+
+grid_intersection2$status <- "protected_ammb" #lets us know that those grid cells have some level of MPA within them 
+
+#join this back to the big grid (right now we just have the gridIDs that are overlapping an MPA)
+grid_intersection2 <- as.data.frame(grid_intersection2)
+
+grid3 <- as.data.frame(grid2)
+grid3 <- left_join(grid3, grid_intersection2, by = "Seq")
+grid3$protected_area_ammb_m2  <- as.numeric(grid3$area.y)
+grid3 <- grid3 %>% dplyr::select(-geom)
+grid3 <- st_as_sf(grid3)
+
+ggplot() + geom_sf(data = grid3, aes(fill = protected_area_ammb_m2)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+
+grid3 <- grid3 %>% rename(status_coco = "status.x", status_ammb = "status.y") %>% select(-area.x, -area.y)
+```
+
+##1.4 Find surrounding grid cells 
+
+
