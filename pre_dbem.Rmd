@@ -24,7 +24,7 @@ select <- dplyr::select
 ```
 
 #1 Grid identification 
-##1.1 Load in the mpa data and check crs information
+### 1.1 Load in the mpa data and check crs information
 ```{r}
 ammb <- read_sf((here("data/spatial/ammb/AMM_Bicentenario_CostaRica.shp")))
 plot(ammb)
@@ -50,7 +50,7 @@ st_crs(coco)
 ggplot() + geom_sf(data = ammb, colour = "blue") + geom_sf(data = coco, colour = "red") 
 ```
 
-##1.2 Load in grid data
+### 1.2 Load in grid data
 ```{r}
 grid <- read_sf(here("./data/spatial/grid/worldsq_EA.shp"))
 grid <- grid %>% filter(Lat < 10 & Lat > 0 & Lon > -92 & Lon < -82)
@@ -64,7 +64,7 @@ ggplot() + geom_sf(data = grid) + geom_sf(data = ammb, aes(colour = "ammb"), fil
 scale_color_manual(values = c("darkred", "blue"))
 ```
 
-##1.3 Identify grids that are MPAs or surrounding an MPA
+### 1.3 Identify grids that are MPAs
 ```{r}
 
 #coco 
@@ -109,8 +109,124 @@ ggplot() + geom_sf(data = grid3, aes(fill = protected_area_ammb_m2)) + geom_sf(d
 scale_color_manual(values = c("darkred", "blue"))
 
 grid3 <- grid3 %>% rename(status_coco = "status.x", status_ammb = "status.y") %>% select(-area.x, -area.y)
+
+
+```
+### 1.4 Calculate prop of MPA grid cells based on area 
+```{r}
+#start with coco
+grid_coco <- grid3 %>% 
+  rename(status = "status_coco", protected_area_m2 = "protected_area_coco_m2") %>% 
+  select(OBJECTID, Seq, Lat, Lon, geometry, status, protected_area_m2) %>% 
+  mutate(mpa = "cocos") #use to calculate size of the Mpa 
+
+grid_coco_mpa <- grid_coco %>% filter(status == "protected_coco")
+
+grid_coco_mpa$status <- "protected"
+
+
+
+# gridpointsb <- gridpoints[colnames(gridpoints) %in% c("Seq","Lon", "Lat")]
+
+### Estimate area
+
+
+ # 1.2 Estimate gridcell area based on global variables (m^2)
+# Degree ressolution for area estimation
+# https://rdrr.io/github/stineb/rbeni/src/R/area.R
+# https://www.pmel.noaa.gov/maillists/tmap/ferret_users/fu_2004/msg00023.html
+# https://www.engr.scu.edu/~emaurer/tools/calc_cell_area_cgi.pl
+
+r_earth <- 6371000 # NASA's volumetric mean radious https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+res_lon <- 0.5 # lon degree resolution
+res_lat <- 0.5 # lat degree resolution
+
+grid_coco_mpa <-
+  grid_coco_mpa %>% 
+  mutate(
+    grid_area = (4 * r_earth^2 * 0.5 * res_lon * pi/180 * cos(abs(Lat) * pi/180 ) * sin(0.5 * res_lat * pi/180)),
+    prop = ifelse(status == "protected", 1-(protected_area_m2/grid_area), prop),
+    prop = replace_na(prop,0)
+  )
+
+
+#total proportion 
+#this will help allocate fishing effort to the surrounding areas. 
+tot_cocos_area = sum(grid_coco_mpa$grid_area)
+tot_cocos_mpa = sum(grid_coco_mpa$protected_area_m2)
+prop_cocos = tot_cocos_mpa/tot_cocos_area
+
+#so about 75% of those grid cells that intersect with cocos MPA have protected area 
 ```
 
-##1.4 Find surrounding grid cells 
+
+### 1.4 Find surrounding grid cells 
+```{r}
+grid_coco_no <- grid_coco %>% filter(is.na(status))
+```
+
+find surrounding cells (depending on size of MPA )
+
+```{r}
+ggplot() + geom_sf(grid_coco_mpa, mapping = aes(colour = as.factor(mpa)))
+
+#create buffer
+buffer <- st_buffer(grid_coco_mpa, 54500)
+
+intr <- st_intersection(grid_coco_no, buffer)
+intr_seqs <- c(intr$Seq)
+grid_coco_surround <- grid_coco_no %>% filter(Seq %in% intr_seqs)
 
 
+
+grid_coco_surround <- grid_coco_surround %>% mutate(status ="surrounding")
+
+
+```
+
+###1.5 Reallocate fishing effort to surrounding cells 
+
+```{r}
+#now do the proportion calculation
+
+grid_coco_mpa <- grid_coco_mpa %>% add_count(mpa)
+grid_coco_mpa$mpa_n <- grid_coco_mpa$n
+grid_coco_mpa$mpa_n <- grid_coco_mpa$mpa_n*prop_cocos #this is because some of the grid cells are only partially covered
+
+grid_coco_mpa1 <- as.data.frame(grid_coco_mpa) %>% dplyr::select(mpa, mpa_n) %>% ungroup() %>% distinct()
+
+grid_coco_surround <- left_join(grid_coco_surround, grid_coco_mpa1, by = "mpa")
+
+grid_coco_surround <- grid_coco_surround %>% add_count(mpa) %>% mutate("prop" = ((mpa_n/n)) + 1) #this is the total number of gridcells (proportioned by coverage) within one continuous MPA/total number of grid cells surrounding that MPA 
+
+#there are 24 mpa cells and 24 surrounding cells 
+ggplot() + geom_sf(data = grid_coco_surround, aes(fill = status)) + geom_sf(data = grid_coco_mpa, aes(fill = status))
+```
+
+### 1.5 Clean up the dataset 
+
+```{r}
+names <- c("Seq", "Lat", "Lon", "status", "prop", "protected_area_m2")
+
+grid_coco_mpa <- grid_coco_mpa[colnames(grid_coco_mpa) %in% names]
+grid_coco_mpa <- grid_coco_mpa %>% st_drop_geometry()
+grid_coco_surround <- as.data.frame(grid_coco_surround)
+# write_csv(intr,"intr.csv")
+
+grid_coco_surround <- grid_coco_surround[colnames(grid_coco_surround) %in% names]
+
+pt <- rbind(as.data.frame(grid_coco_surround), as.data.frame(grid_coco_mpa))
+pt <- pt %>% distinct()
+
+
+grid_final <- left_join(grid_coco, pt, by = c("Seq","Lon", "Lat"))
+grid_final <- grid_final %>% distinct() #some of the 
+
+grid_final %>% dplyr::filter(status.y %in% c("protected","surrounding")) %>%
+  ggplot() + 
+  geom_tile(aes(x = Lon,
+                y = Lat,
+                fill = prop
+                )
+            )
+```
