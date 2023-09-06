@@ -38,18 +38,18 @@ This project is a sub-component of a larger project and will be integrated with 
 ### Scenario 1 (Conservation inclined)
 - PNC, 100% MPA
 - AMM, FMSY = 1/2MSY
-- Everything esle F = MSY
+- Everything else F = MSY
 
 ### Scenario 2 (Fishing inclined)
-- PNC, 100% MPA original, F = 1.5MSY for expansion
+- PNC, 100% MPA original
 - AMM, FMSY
-- Everything esle F = 1.5MSY
+- Everything else F = 1.5MSY
 
 ### Scenario 3 (IUU inclined)
 
 - PNC, 90% MPA original and expansion
-- AMM, FMSY0.60
-- Everything esle F = 1.5MSY
+- AMM, FMSY1.5
+- Everything else F = 1.5MSY
 
 ## Overall details
 
