@@ -23,8 +23,9 @@ select <- dplyr::select
 
 ```
 
-#1 Grid identification 
-### 1.1 Load in the mpa data and check crs information
+
+# 1 Load data and Intersect
+##1.1 Load in the mpa data and check crs information
 ```{r}
 ammb <- read_sf((here("data/spatial/ammb/AMM_Bicentenario_CostaRica.shp")))
 plot(ammb)
@@ -50,7 +51,7 @@ st_crs(coco)
 ggplot() + geom_sf(data = ammb, colour = "blue") + geom_sf(data = coco, colour = "red") 
 ```
 
-### 1.2 Load in grid data
+## 1.2 Load in grid data
 ```{r}
 grid <- read_sf(here("./data/spatial/grid/worldsq_EA.shp"))
 grid <- grid %>% filter(Lat < 10 & Lat > 0 & Lon > -92 & Lon < -82)
@@ -64,7 +65,7 @@ ggplot() + geom_sf(data = grid) + geom_sf(data = ammb, aes(colour = "ammb"), fil
 scale_color_manual(values = c("darkred", "blue"))
 ```
 
-### 1.3 Identify grids that are MPAs
+## 1.3 Identify grids that are MPAs
 ```{r}
 
 #coco 
@@ -110,64 +111,42 @@ scale_color_manual(values = c("darkred", "blue"))
 
 grid3 <- grid3 %>% rename(status_coco = "status.x", status_ammb = "status.y") %>% select(-area.x, -area.y)
 
+```
+##1.4 Estimate area
+
+```{r}
+
+grid3$grid_area <- st_area(grid3)
+grid3 <- grid3 %>% drop_units()
+
+grid3$prop_coco <- 1
+grid3$prop_ammb <- 1
+grid3 <-
+  grid3 %>% 
+  mutate(
+    prop_coco = ifelse(status_coco == "protected_coco", (protected_area_coco_m2/grid_area), prop_coco),
+    prop_ammb = ifelse(status_ammb == "protected_ammb", (protected_area_ammb_m2/grid_area), prop_ammb)
+  ) #this is the proportion of the grid cell covered by each mpa 
+
 
 ```
-### 1.4 Calculate prop of MPA grid cells based on area 
+
+## 1.5 Find surrounding grid cells 
+Because ammb is surrounding cocos (i.e cocos is completely within ammb), we will find both the surrounding grid cells for ammb and cocos. The cocos effort and ammb effort will be reallocated to those cells depending on the scenario.
+
 ```{r}
 #start with coco
 grid_coco <- grid3 %>% 
   rename(status = "status_coco", protected_area_m2 = "protected_area_coco_m2") %>% 
-  select(OBJECTID, Seq, Lat, Lon, geometry, status, protected_area_m2) %>% 
+  select(OBJECTID, Seq, Lat, Lon, geometry, status, protected_area_m2, grid_area) %>% 
   mutate(mpa = "cocos") #use to calculate size of the Mpa 
 
 grid_coco_mpa <- grid_coco %>% filter(status == "protected_coco")
-
 grid_coco_mpa$status <- "protected"
 
 
-
-# gridpointsb <- gridpoints[colnames(gridpoints) %in% c("Seq","Lon", "Lat")]
-
-### Estimate area
-
-
- # 1.2 Estimate gridcell area based on global variables (m^2)
-# Degree ressolution for area estimation
-# https://rdrr.io/github/stineb/rbeni/src/R/area.R
-# https://www.pmel.noaa.gov/maillists/tmap/ferret_users/fu_2004/msg00023.html
-# https://www.engr.scu.edu/~emaurer/tools/calc_cell_area_cgi.pl
-
-r_earth <- 6371000 # NASA's volumetric mean radious https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
-res_lon <- 0.5 # lon degree resolution
-res_lat <- 0.5 # lat degree resolution
-
-grid_coco_mpa <-
-  grid_coco_mpa %>% 
-  mutate(
-    grid_area = (4 * r_earth^2 * 0.5 * res_lon * pi/180 * cos(abs(Lat) * pi/180 ) * sin(0.5 * res_lat * pi/180)),
-    prop = ifelse(status == "protected", 1-(protected_area_m2/grid_area), prop),
-    prop = replace_na(prop,0)
-  )
-
-
-#total proportion 
-#this will help allocate fishing effort to the surrounding areas. 
-tot_cocos_area = sum(grid_coco_mpa$grid_area)
-tot_cocos_mpa = sum(grid_coco_mpa$protected_area_m2)
-prop_cocos = tot_cocos_mpa/tot_cocos_area
-
-#so about 75% of those grid cells that intersect with cocos MPA have protected area 
-```
-
-
-### 1.4 Find surrounding grid cells 
-```{r}
 grid_coco_no <- grid_coco %>% filter(is.na(status))
-```
 
-find surrounding cells (depending on size of MPA )
-
-```{r}
 ggplot() + geom_sf(grid_coco_mpa, mapping = aes(colour = as.factor(mpa)))
 
 #create buffer
@@ -179,31 +158,280 @@ grid_coco_surround <- grid_coco_no %>% filter(Seq %in% intr_seqs)
 
 
 
-grid_coco_surround <- grid_coco_surround %>% mutate(status ="surrounding")
+grid_coco_surround <- grid_coco_surround %>% mutate(surrounding_coco ="surrounding_coco")
+
+
+ggplot() + geom_sf(data = grid_coco_surround, aes(fill = surrounding_coco)) + geom_sf(data = grid_coco_mpa, aes(fill = status))
+
+#now ammb 
+
+grid_ammb <- grid3 %>% 
+  rename(status = "status_ammb", protected_area_m2 = "protected_area_ammb_m2") %>% 
+  select(OBJECTID, Seq, Lat, Lon, geometry, status, protected_area_m2, grid_area) %>% 
+  mutate(mpa = "ammb") #use to calculate size of the Mpa 
+
+grid_ammb_mpa <- grid_ammb %>% filter(status == "protected_ammb")
+grid_ammb_mpa$status <- "protected"
+
+
+grid_ammb_no <- grid_ammb %>% filter(is.na(status))
+
+ggplot() + geom_sf(grid_ammb_mpa, mapping = aes(colour = as.factor(mpa)))
+
+#create buffer
+buffer <- st_buffer(grid_ammb_mpa, 54500)
+
+intr <- st_intersection(grid_ammb_no, buffer)
+intr_seqs <- c(intr$Seq)
+grid_ammb_surround <- grid_ammb_no %>% filter(Seq %in% intr_seqs)
+
+
+
+grid_ammb_surround <- grid_ammb_surround %>% mutate(surrounding_ammb ="surrounding_ammb")
+
+
+ggplot() + geom_sf(data = grid_ammb_surround, aes(fill = surrounding_ammb)) + geom_sf(data = grid_ammb_mpa, aes(fill = status))
+
+
+#create one big dataframe - there are a few that are both surrounding ammb and coco so keep that column separate for now
+
+grid_ammb_surround <- grid_ammb_surround %>% select(Seq, surrounding_ammb) %>% st_drop_geometry()
+grid_coco_surround <- grid_coco_surround %>% select(Seq, surrounding_coco) %>% st_drop_geometry()
+grid_use <- left_join(grid3, grid_ammb_surround, by = "Seq")
+grid_use <- left_join(grid_use, grid_coco_surround, by = "Seq")
+
+grid_use <- grid_use %>% mutate(surrounding_ammb = replace(surrounding_ammb, which(status_coco == "protected_coco"), NA)) #we don't need these to be considered surrounding 
+
+
+#total proportion 
+#this will help allocate fishing effort to the surrounding areas. 
+tot_cocos_area = sum(grid_coco_mpa$grid_area)
+tot_cocos_mpa = sum(grid_coco_mpa$protected_area_m2)
+prop_cocos = tot_cocos_mpa/tot_cocos_area
+
+tot_ammb_area = sum(grid_ammb_mpa$grid_area)
+tot_ammb_mpa = sum(grid_ammb_mpa$protected_area_m2)
+prop_ammb = tot_ammb_mpa/tot_ammb_area
+
+tot_ammb_or_cocos_area <- grid_use %>% filter(status_coco %in% "protected_coco" | status_ammb %in% "protected_ammb")
+tot_ammb_or_cocos_area = sum(tot_ammb_or_cocos_area$grid_area) #this is necesairy so we don't double count protected cells in scenario 1
+
+
 
 
 ```
 
-###1.5 Reallocate fishing effort to surrounding cells 
+#Reallocate 
+There are three ways to reallocate
+
+1. Based on area: To reallocate fishing from protected, we take the area protected/total area of grid cells that contain a protected area and reallocate that protected area proportion to the surrounding cells. This is the most accurate and least conservative (i.e least amount of fishing)
+  (area covered by mpa*protection level/total area of grid cells that contain a protected area)/n surrounding grid cells + 1 (or 1.5)
+
+2. Based on grid cell #: (Number of grid cells containing any level of protection*protection level/n surrounding grid cells) + 1.  This is more conservative and assumes if any amount of a grid cells is protected then any fishing that would have happened in that grid cell gets reallocated. It is less accurate to calculate area of grid cells for the entire globe so we did it this way. This is the most conservative (i.e allows the most fishing)
+
+3. Based on edges: Reallocate only edge grid cells. This was done for North Sea because the MPAs were small and random so most of them only contained edge grid cells. Also, there were no grid cells that were partially covered. This one just doesn't make sense for the way these MPAs area designed, but it is in between 1 and 2 for prop allowed to fish 
+
+#2 Reallocate based on area
+## 2.1 Scenario 1 
+(Conservation included)
+PNC, 100% MPA
+AMM, FMSY = 1/2MSY
+Everything else F = MSY
+  Reallocate the fishing from PNC and AMM to the grid cells surrounding AMM
+
+Prop is going to be proportion of the grid cell that fishes
+
+1. calculate total area covered by PNC, AMM 
+
+2. For grid cells with both PNC and AMM, prop in coco*fishing allowed + prop in ammb*fishing allowed =         .5*0 + .5*.5 = .25 for scenario 1
+3. Set PNC prop to 1-prop in coco - for grid cells that only intersect PNC
+
+4. Set AMM prop to .5*ammb prop of grid cell covered - for only intersect AMMB
+
+5. Redistribute total PNC area and 1/2 AMM area to surrounding cells 
+  calculate proportion to reallocate: 
+    prop_allocation = (area covered by PNC + (area covered by AMM)*AMM fishing allowed)/area of grid cells containing AMM or PNC <- needs to be or, or else will double count grid cells
+    
+  Redistribute that to surrounding grid cells area of surrounding grid cells + 1 
+    = (prop_allocation/# surrounding grid cells) + 1
+
+```{r}
+#grid cells that overlap both cocos and ammb 
+grid_sc1 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco" & status_ammb %in% "protected_ammb", prop_coco*0 + prop_ammb*.5,1)) #%in% important here because of NAs
+
+#grid cells that are just ammb 
+grid_sc1 <- grid_sc1 %>%  mutate(prop = if_else(status_ammb %in% "protected_ammb" & !status_coco %in% "protected_coco", 1-(prop_ammb*.5), prop))
+
+#grid cells that are just coco 
+grid_sc1 <- grid_sc1 %>%  mutate(prop = if_else(!status_ammb %in% "protected_ammb" & status_coco %in% "protected_coco", 1-prop_coco, prop)) #these should all be 0
+
+#grid cells surrounding ammb (and coco)
+n_surround = grid_sc1 %>% st_drop_geometry %>% filter(surrounding_ammb == "surrounding_ammb") %>% tally()
+
+#protected proportion to reallocate (calculated as area of each mpa/area of grid cells containing mpa)
+prop_allocate = (tot_ammb_mpa*.5 + tot_cocos_mpa)/tot_ammb_or_cocos_area
+
+#allocate surrounding cells
+grid_sc1 <- grid_sc1 %>%  mutate(prop = if_else(surrounding_ammb %in% "surrounding_ammb",(prop_allocate/n_surround$n) +1 , prop))
+
+```
+
+##2.2 Scenario 2
+(Fishing inclined)
+- PNC, 100% MPA original
+- AMM, FMSY
+- Everything else F = 1.5MSY
+
+fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
+Prop is going to be proportion of the grid cell that fishes
+
+1. calculate total area covered by PNC
+
+2. Set PNC prop to 1-prop in coco - for grid cells that only intersect PNC, set AMM to 1
+
+3. Redistribute PNC area protected to AMM cells that surround PNC 
+   area covered by PNC*PNC fishing allowed/area grid cells containing PNC 
+   + 1 
+
+4. Set everything else to 1.5 
+
+```{r}
+
+#grid cells that overlap coco 
+grid_sc2 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco", 1-prop_coco, 1)) #this means that fishing decreases by proportion of the cell covered by coco
+
+#Redistribute PNC area fished to AMM cells that surround PNC 
+#grid cells surrounding coco
+n_surround = grid_sc2 %>% st_drop_geometry %>% filter(surrounding_coco == "surrounding_coco") %>% tally()
+
+#protected proportion to reallocate (calculated as area covered by coco/area of grid cells containing coco mpa)
+prop_allocate = tot_cocos_mpa/tot_cocos_area
+
+#allocate surrounding cells
+grid_sc2 <- grid_sc2 %>%  mutate(prop = if_else(surrounding_coco %in% "surrounding_coco",(prop_allocate/n_surround$n) +1 , prop))
+
+#Set everything else to 1.5 
+grid_sc2 <- grid_sc2 %>%  mutate(prop = if_else(status_ammb %in% "protected_ammb" | status_coco %in% "protected_coco" | surrounding_coco %in% "surrounding_coco", prop, 1.5))
+```
+
+##2.3 Scenario 3 
+(IUU inclined)
+- PNC, 90%  (10% allows fishing)
+- AMM, FMSY1.5
+- Everything else F = 1.5MSY
+
+fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
+Prop is going to be proportion of the grid cell that fishes
+
+
+1. Set PNC prop to 1-(prop in coco*.90) - for grid cells that only intersect PNC
+
+2. Redistribute PNC area*prop protected to AMM cells that surround PNC 
+
+3. Set everything else to 1.5 
+
+```{r}
+
+#grid cells that overlap coco 
+grid_sc3 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco", 1-prop_coco*.90, 1.5)) #this means that fishing decreases by proportion of the cell covered by coco - so if it is 100% covered by coco then prop should be .1 open to fishing
+
+#Redistribute PNC area fished to AMM cells that surround PNC 
+#grid cells surrounding coco
+n_surround = grid_sc3 %>% st_drop_geometry %>% filter(surrounding_coco == "surrounding_coco") %>% tally()
+
+#protected proportion to reallocate (calculated as area covered by coco*.9/area of grid cells containing coco mpa)
+prop_allocate = (tot_cocos_mpa*.9)/tot_cocos_area
+
+#allocate surrounding cells
+grid_sc3 <- grid_sc3 %>%  mutate(prop = if_else(surrounding_coco %in% "surrounding_coco",(prop_allocate/n_surround$n) +1.5 , prop)) #changed to 1.5 
+
+```
+
+
+#3 Reallocate based on number of grid cells 
+To test the sensitivity of each reallocation method, take Scenario 2 and reallocate based on number of grid cells (instead of proportion area protected). Scenario 2 is the most simple. 
+
+##3.2 Scenario 2 
+(Fishing inclined)
+- PNC, 100% MPA original
+- AMM, FMSY
+- Everything else F = 1.5MSY
+
+```{r}
+
+#grid cells that overlap coco 
+grid_sc2_2 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco", 1-prop_coco, 1)) #this means that fishing decreases by proportion of the cell covered by coco
+
+#Redistribute PNC area fished to AMM cells that surround PNC 
+#grid cells surrounding coco
+n_surround = grid_sc2_2 %>% st_drop_geometry %>% filter(surrounding_coco == "surrounding_coco") %>% tally()
+
+n_coco = grid_sc2_2 %>% st_drop_geometry %>% filter(status_coco == "protected_coco") %>% tally()
+
+#allocate surrounding cells
+grid_sc2_2 <- grid_sc2_2 %>%  mutate(prop = if_else(surrounding_coco %in% "surrounding_coco",(n_coco$n/n_surround$n) +1 , prop))
+
+#Set everything else to 1.5 
+grid_sc2_2 <- grid_sc2_2 %>%  mutate(prop = if_else(status_ammb %in% "protected_ammb" | status_coco %in% "protected_coco" | surrounding_coco %in% "surrounding_coco", prop, 1.5))
+
+#there are 24 coco cells and 24 surrounding, so they all get allocated 
+
+grid_sc2$prop2 <- grid_sc2_2$prop
+```
+
+#4 Reallocate based on outer cells only
+To test the sensitivity of each reallocation method, take Scenario 2 and reallocate only outer grid cells. Scenario 2 is the most simple. I think the most meaningful way of doing this would be to reallocate based on grid cells (instead of area) and only do the outer grid cells (16 vs. 24) 
+
+##3.2 Scenario 2 
+(Fishing inclined)
+- PNC, 100% MPA original
+- AMM, FMSY
+- Everything else F = 1.5MSY
+
+```{r}
+
+#grid cells that overlap coco 
+grid_sc2_3 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco", 1-prop_coco, 1)) #this means that fishing decreases by proportion of the cell covered by coco
+
+#Redistribute PNC area fished to AMM cells that surround PNC 
+#grid cells surrounding coco
+n_surround = grid_sc2_3 %>% st_drop_geometry %>% filter(surrounding_coco == "surrounding_coco") %>% tally()
+
+n_coco = 16
+
+#allocate surrounding cells
+grid_sc2_3 <- grid_sc2_3 %>%  mutate(prop = if_else(surrounding_coco %in% "surrounding_coco",(n_coco/n_surround$n) +1 , prop))
+
+#Set everything else to 1.5 
+grid_sc2_3 <- grid_sc2_3 %>%  mutate(prop = if_else(status_ammb %in% "protected_ammb" | status_coco %in% "protected_coco" | surrounding_coco %in% "surrounding_coco", prop, 1.5))
+
+#there are 24 coco cells and 24 surrounding, so they all get allocated 
+
+grid_sc2$prop3 <- grid_sc2_3$prop
+
+sum(grid_sc2$prop) 
+sum(grid_sc2$prop2) 
+sum(grid_sc2$prop3)
+```
+
+
+
+
+
+
+##2.3 Reallocate fishing effort to surrounding cells 
 
 ```{r}
 #now do the proportion calculation
 
-grid_coco_mpa <- grid_coco_mpa %>% add_count(mpa)
-grid_coco_mpa$mpa_n <- grid_coco_mpa$n
-grid_coco_mpa$mpa_n <- grid_coco_mpa$mpa_n*prop_cocos #this is because some of the grid cells are only partially covered
-
-grid_coco_mpa1 <- as.data.frame(grid_coco_mpa) %>% dplyr::select(mpa, mpa_n) %>% ungroup() %>% distinct()
-
-grid_coco_surround <- left_join(grid_coco_surround, grid_coco_mpa1, by = "mpa")
 
 grid_coco_surround <- grid_coco_surround %>% add_count(mpa) %>% mutate("prop" = ((mpa_n/n)) + 1) #this is the total number of gridcells (proportioned by coverage) within one continuous MPA/total number of grid cells surrounding that MPA 
 
 #there are 24 mpa cells and 24 surrounding cells 
-ggplot() + geom_sf(data = grid_coco_surround, aes(fill = status)) + geom_sf(data = grid_coco_mpa, aes(fill = status))
+
 ```
 
-### 1.5 Clean up the dataset 
+### 2.4 Clean up the dataset 
 
 ```{r}
 names <- c("Seq", "Lat", "Lon", "status", "prop", "protected_area_m2")
