@@ -274,6 +274,9 @@ prop_allocate = (tot_ammb_mpa*.5 + tot_cocos_mpa)/tot_ammb_or_cocos_area
 #allocate surrounding cells
 grid_sc1 <- grid_sc1 %>%  mutate(prop = if_else(surrounding_ammb %in% "surrounding_ammb",(prop_allocate/n_surround$n) +1 , prop))
 
+ggplot() + geom_sf(data = subset(grid_sc1, grid_sc1$prop != 1), aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+
 ```
 
 ##2.2 Scenario 2
@@ -312,6 +315,9 @@ grid_sc2 <- grid_sc2 %>%  mutate(prop = if_else(surrounding_coco %in% "surroundi
 
 #Set everything else to 1.5 
 grid_sc2 <- grid_sc2 %>%  mutate(prop = if_else(status_ammb %in% "protected_ammb" | status_coco %in% "protected_coco" | surrounding_coco %in% "surrounding_coco", prop, 1.5))
+
+ggplot() + geom_sf(data = grid_sc2, aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
 ```
 
 ##2.3 Scenario 3 
@@ -345,6 +351,9 @@ prop_allocate = (tot_cocos_mpa*.9)/tot_cocos_area
 #allocate surrounding cells
 grid_sc3 <- grid_sc3 %>%  mutate(prop = if_else(surrounding_coco %in% "surrounding_coco",(prop_allocate/n_surround$n) +1.5 , prop)) #changed to 1.5 
 
+ggplot() + geom_sf(data = subset(grid_sc3, grid_sc3$prop !=1.5), aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+
 ```
 
 
@@ -377,6 +386,9 @@ grid_sc2_2 <- grid_sc2_2 %>%  mutate(prop = if_else(status_ammb %in% "protected_
 #there are 24 coco cells and 24 surrounding, so they all get allocated 
 
 grid_sc2$prop2 <- grid_sc2_2$prop
+
+ggplot() + geom_sf(data = grid_sc2, aes(fill = prop2)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
 ```
 
 #4 Reallocate based on outer cells only
@@ -409,52 +421,26 @@ grid_sc2_3 <- grid_sc2_3 %>%  mutate(prop = if_else(status_ammb %in% "protected_
 
 grid_sc2$prop3 <- grid_sc2_3$prop
 
-sum(grid_sc2$prop) 
-sum(grid_sc2$prop2) 
-sum(grid_sc2$prop3)
+ggplot() + geom_sf(data = grid_sc2, aes(fill = prop3)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
 ```
 
 
 
 
 
-
-##2.3 Reallocate fishing effort to surrounding cells 
-
-```{r}
-#now do the proportion calculation
-
-
-grid_coco_surround <- grid_coco_surround %>% add_count(mpa) %>% mutate("prop" = ((mpa_n/n)) + 1) #this is the total number of gridcells (proportioned by coverage) within one continuous MPA/total number of grid cells surrounding that MPA 
-
-#there are 24 mpa cells and 24 surrounding cells 
-
-```
 
 ### 2.4 Clean up the dataset 
 
 ```{r}
-names <- c("Seq", "Lat", "Lon", "status", "prop", "protected_area_m2")
+names <- c("Seq", "Lat", "Lon", "prop")
 
-grid_coco_mpa <- grid_coco_mpa[colnames(grid_coco_mpa) %in% names]
-grid_coco_mpa <- grid_coco_mpa %>% st_drop_geometry()
-grid_coco_surround <- as.data.frame(grid_coco_surround)
-# write_csv(intr,"intr.csv")
+sc1 <- grid_sc1 %>% st_drop_geometry() %>% dplyr::select(names)
+sc3 <- grid_sc3 %>% st_drop_geometry() %>% dplyr::select(names)
+sc2 <- grid_sc2 %>% st_drop_geometry() %>% dplyr::select(Seq, Lat, Lon, prop, prop2, prop3)
 
-grid_coco_surround <- grid_coco_surround[colnames(grid_coco_surround) %in% names]
+write.csv(sc1, "data/scenario1.csv")
+write.csv(sc2, "data/scenario2.csv")
+write.csv(sc3, "data/scenario3.csv")
 
-pt <- rbind(as.data.frame(grid_coco_surround), as.data.frame(grid_coco_mpa))
-pt <- pt %>% distinct()
-
-
-grid_final <- left_join(grid_coco, pt, by = c("Seq","Lon", "Lat"))
-grid_final <- grid_final %>% distinct() #some of the 
-
-grid_final %>% dplyr::filter(status.y %in% c("protected","surrounding")) %>%
-  ggplot() + 
-  geom_tile(aes(x = Lon,
-                y = Lat,
-                fill = prop
-                )
-            )
 ```
