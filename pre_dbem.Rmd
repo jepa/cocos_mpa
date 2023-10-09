@@ -322,7 +322,7 @@ scale_color_manual(values = c("darkred", "blue"))
 
 ##2.3 Scenario 3 
 (IUU inclined)
-- PNC, 90%  (10% allows fishing)
+- PNC, 80%  (20% allows fishing)
 - AMM, FMSY1.5
 - Everything else F = 1.5MSY
 
@@ -330,7 +330,7 @@ fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
 Prop is going to be proportion of the grid cell that fishes
 
 
-1. Set PNC prop to 1-(prop in coco*.90) - for grid cells that only intersect PNC
+1. Set PNC prop to 1-(prop in coco*.80) - for grid cells that only intersect PNC
 
 2. Redistribute PNC area*prop protected to AMM cells that surround PNC 
 
@@ -339,14 +339,14 @@ Prop is going to be proportion of the grid cell that fishes
 ```{r}
 
 #grid cells that overlap coco 
-grid_sc3 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco", 1-prop_coco*.90, 1.5)) #this means that fishing decreases by proportion of the cell covered by coco - so if it is 100% covered by coco then prop should be .1 open to fishing
+grid_sc3 <- grid_use %>%  mutate(prop = if_else(status_coco %in% "protected_coco", 1-prop_coco*.80, 1.5)) #this means that fishing decreases by proportion of the cell covered by coco - so if it is 100% covered by coco then prop should be .1 open to fishing
 
 #Redistribute PNC area fished to AMM cells that surround PNC 
 #grid cells surrounding coco
 n_surround = grid_sc3 %>% st_drop_geometry %>% filter(surrounding_coco == "surrounding_coco") %>% tally()
 
-#protected proportion to reallocate (calculated as area covered by coco*.9/area of grid cells containing coco mpa)
-prop_allocate = (tot_cocos_mpa*.9)/tot_cocos_area
+#protected proportion to reallocate (calculated as area covered by coco*.8/area of grid cells containing coco mpa)
+prop_allocate = (tot_cocos_mpa*.8)/tot_cocos_area
 
 #allocate surrounding cells
 grid_sc3 <- grid_sc3 %>%  mutate(prop = if_else(surrounding_coco %in% "surrounding_coco",(prop_allocate/n_surround$n) +1.5 , prop)) #changed to 1.5 
@@ -438,6 +438,7 @@ names <- c("Seq", "Lat", "Lon", "prop")
 sc1 <- grid_sc1 %>% st_drop_geometry() %>% dplyr::select(names)
 sc3 <- grid_sc3 %>% st_drop_geometry() %>% dplyr::select(names)
 sc2 <- grid_sc2 %>% st_drop_geometry() %>% dplyr::select(Seq, Lat, Lon, prop, prop2, prop3)
+
 
 write.csv(sc1, "data/scenario1.csv")
 write.csv(sc2, "data/scenario2.csv")
