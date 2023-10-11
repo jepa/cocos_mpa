@@ -425,11 +425,6 @@ ggplot() + geom_sf(data = grid_sc2, aes(fill = prop3)) + geom_sf(data = ammb, ae
 scale_color_manual(values = c("darkred", "blue"))
 ```
 
-
-
-
-
-
 ### 2.4 Clean up the dataset 
 
 ```{r}
@@ -445,3 +440,59 @@ write.csv(sc2, "data/scenario2.csv")
 write.csv(sc3, "data/scenario3.csv")
 
 ```
+
+# Prepare data for DBEM
+
+```{r}
+
+grid_to_dbem <- function(scenario){
+  
+  scenario_grid <- read_csv(paste0(here::here("data/"),scenario,".csv"))
+  
+  mpa_index <- scenario_grid %>% 
+    rename(index = Seq) %>% 
+    right_join(dbem_coords,
+               by ="index") %>% 
+  #   # Double check matched DBEM grid (it does)
+  #   mutate(
+  #     status = ifelse(prop == 1,"open",
+  #                     ifelse(prop <= 1,"protected",
+  #                            ifelse(prop >= 1,"surrouding","outside")
+  #                     )
+  #     )
+  #   )
+  # 
+  # ggplot(mpa_index) +
+  #   geom_tile(
+  #     aes(
+  #       x = lon,
+  #       y = lat,
+  #       fill = prop
+  #     )
+  #   ) +
+  #   MyFunctions::my_land_map()
+    
+  ## Fix NAs for DBEM 
+    arrange(index) %>% 
+    mutate(prop = ifelse(is.na(prop),1,prop)) %>% 
+    select(prop)
+  
+name <- paste0(here("data",scenario),".txt")
+write.table(mpa_index, file=name, sep="\t", col.names = F, row.names = F)
+
+}
+
+
+
+# Run protocol
+# Get DBEM coords
+dbem_coords <- MyFunctions::my_data(data = "dbem_coords")
+# List of scenarios
+scenarios <- list.files(here::here("data"))
+scenarios <- str_sub(scenarios,0,9)
+# Run function
+lapply(scenarios, grid_to_dbem)
+
+```
+
+
