@@ -12,7 +12,8 @@ load_pkg(c(
   # For grid estimation and species selection
   "spatialEco","tidyverse", "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
   # For collaborative ease
-  "here"
+  "here",
+  "readr"
   ))
 
 # For grid e
@@ -495,4 +496,29 @@ lapply(scenarios, grid_to_dbem)
 
 ```
 
+# Species
+
+```{r spp_data, eval = F, echo = F}
+
+# ETP important species
+etp_species_metadata <- read_csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/etp_species_metadata.csv") %>% 
+  select(species,dbem) %>% 
+  filter(dbem == "yes")
+
+# DBEM species
+exploited_species <- MyFunctions::my_data("sau_species") %>% 
+  filter(taxon_name %in% etp_species_metadata$species) 
+
+# Save for DBEM
+write.table(exploited_species %>% 
+                      select(taxon_key),
+                    file = paste0(here("data","RunSppListCoco.txt")),
+            sep="\t", col.names = F, row.names = F)
+
+# Save for project
+write_csv(x = exploited_species,
+          here("data/project_species_list.csv"))
+
+
+```
 
