@@ -1,0 +1,164 @@
+---
+title: "pred_dbem"
+author: "Sarah Roberts & Juliano Palacios Abrantes"
+date: "2023-10-24"
+output: html_document
+---
+
+```{r setup, include = F}
+source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
+
+load_pkg(c(
+  # For grid estimation and species selection
+  "spatialEco","tidyverse", "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
+  # For collaborative ease
+  "here",
+  "readr",
+  "janitor"
+  ))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+```
+
+# Load data
+
+```{r}
+
+# Scenario sf
+ammb_sf <- st_read(MyFunctions::my_path("D","spatial/ammb","AMM_Bicentenario_CostaRica.shp")) %>% 
+  st_transform(4326)
+
+st_crs(ammb_sf) <-4326
+
+coco_sf <- st_read(MyFunctions::my_path("D","spatial/coco","PN_IslaCoco_CostaRica.shp")) %>% 
+  st_transform(4326)
+st_crs(coco_sf) <-4326
+
+
+
+# Sceario grid
+scen_grid <- read.csv("../data/scenario1.csv") %>% 
+  select(index = Seq, Lat,Lon,prop) %>% 
+  clean_names() %>% 
+  mutate(
+    status = ifelse(prop == 1,"open",
+                    ifelse(prop <= 1,"protected",
+                           ifelse(prop >= 1,"surrouding","outside")
+                    )
+    )
+  )
+
+scen_one <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
+
+```
+
+
+# Preeliminary results
+
+## Map results
+
+```{r}
+
+scen_one %>% 
+  group_by(index,year) %>% 
+  summarise(
+    total_value = sum(value,na.rm = T)
+  ) %>% 
+  left_join(scen_grid,
+            by = "index") %>% 
+  filter(year %in% c(1951, 1980, 2010, 2040, 2070,2099)) %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = total_value,
+      color = total_value
+    )
+  ) +
+  scale_fill_viridis_b() +
+  scale_color_viridis_b() +
+  facet_wrap(~year) +
+  geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "red", size = 2) +
+  geom_sf(data = coco_sf, aes(), fill = "transparent", color = "black", size = 2) 
+
+
+```
+## Linear change by grid
+
+```{r}
+
+scen_one %>% 
+  group_by(index,year) %>% 
+  summarise(
+    total_value = sum(value,na.rm = T)
+  ) %>% 
+  left_join(scen_grid,
+            by = "index") %>% 
+  group_by(year,status) %>% 
+  summarise(
+    total_value = sum(total_value,na.rm = T)
+  ) %>% 
+  ggplot() +
+  geom_line(
+    aes(
+      x = as.numeric(year),
+      y = total_value,
+      color = status
+    )
+  )
+  
+
+```
+## Liner change by grid
+
+THis is weighted method of abundace by grid type/number of grids
+
+```{r}
+
+# Estimate ammount of grids
+n_status <- scen_grid %>% 
+  group_by(status) %>% 
+  tally()
+
+# Show result
+scen_one %>% 
+  group_by(index,year) %>% 
+  summarise(
+    total_value = sum(value,na.rm = T)
+  ) %>% 
+  left_join(scen_grid,
+            by = "index") %>% 
+  group_by(year,status) %>% 
+  summarise(
+    total_value = sum(total_value,na.rm = T)
+  ) %>% 
+  left_join(n_status,
+            by = "status") %>% 
+  mutate(value_wgt = total_value/n) %>% 
+  group_by(status) %>% 
+  mutate(
+    value_wgt_rm = round(zoo::rollmean(
+      value_wgt,
+      k = 10, 
+      fill = NA, 
+      align = "left")
+    )
+  ) %>% 
+  filter(!is.na(value_wgt_rm)) %>% 
+  ggplot() +
+  geom_line(
+    aes(
+      x = as.numeric(year),
+      y = value_wgt_rm,
+      color = status
+    )
+  )
+  
+
+```
