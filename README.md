@@ -14,8 +14,8 @@ Repository for project on Isla Cocos and Bicentenario in Costa Rica with MarViva
 - **September 15th, 2023**, Gridded MPAs for DBEM (S)
 - **September 15th, 2023**, Run DBEM for sens analysis (J)
 - **September 30th 2023**, Results of sensitivity analysis (S+J)
-- **September 30th 2023**, Final scenario decission (T+M)
-- **October**, Run DBEM for all scenarios and speices (J)
+- **September 30th 2023**, Final scenario decision (T+M)
+- **October**, Run DBEM for all scenarios and species (J)
 - **November**, Analyse results for scenarios (S+J)
 - **November/December**, Write report (S+J)
 - **December**,report due date (Hard deadline)
@@ -28,10 +28,10 @@ This project is a sub-component of a larger project and will be integrated with 
 # Methodology
 
 - Develop different scenarios with Taylor and MarViva
-- Run a sensitivity analysis to make decission on how to re-distribute fishing effort
+- Run a sensitivity analysis to make decision on how to re-distribute fishing effort
 - Integrate MPAs into DBEM grid
-- Rund the DBEM under the different scenrios and species
-- Data analsysis for report
+- Run the DBEM under the different scenarios and species
+- Data analysis for report
 
 ## Scenarios
 
@@ -53,7 +53,7 @@ This project is a sub-component of a larger project and will be integrated with 
 
 ## Overall details
 
-- **Re-dristribution of F effort**, a sensitivity analysis on re distribution of effort within the PN MPA:
+- **Re-distribution of F effort**, a sensitivity analysis on re distribution of effort within the PN MPA:
   - Only the perimeter (as in NE Atlantic case)
   - All grid cells of MPA
 - ** Getting species list**, ge a list of important species to model, mostly tunas, sharks and billfishes

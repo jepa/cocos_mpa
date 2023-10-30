@@ -18,8 +18,8 @@ load_dbem <- function(scenario, cat = "Catch"){
   files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)
   
   
-  # for(s in 1:length(files_to_read)){
-  for(s in 1:5){
+  for(s in 1:length(files_to_read)){
+  # for(s in 1:5){
   
   load(paste0("/Users/jepa88/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/data/dbem/",scenario,"/",files_to_read[s]))
   
@@ -42,6 +42,12 @@ load_dbem <- function(scenario, cat = "Catch"){
   
   }
   
-  return(dbem_df)
+  final_df <- final_df %>% 
+    mutate(scen = str_sub(scenario,14,15),
+           esm = str_sub(scenario,3,6),
+           ssp = str_sub(scenario,7,8)
+           )
+  
+  return(final_df)
   
 }

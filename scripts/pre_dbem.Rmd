@@ -531,7 +531,8 @@ write_csv(x = exploited_species,
 ### Scenario 3
 
 *Date: 25/10/2023*
-*Job: 16315356*
+*Job: 16315356* - Time ended 10 hrs 
+*Job: 16428504*
 
  SppNo           43
  CCSc C6GFDL85
@@ -547,7 +548,8 @@ write_csv(x = exploited_species,
 ### Scenario 2
 
 *Date: 25/10/2023*
-*Job: 16315154*
+*Job: 16315154* - Time ended 10 hrs 
+*job: 16428711*
  
 SppNo           43
  CCSc C6GFDL85
