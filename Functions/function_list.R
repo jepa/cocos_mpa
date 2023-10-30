@@ -17,19 +17,18 @@ load_dbem <- function(scenario, cat = "Catch"){
   
   if(Sys.info()[8] == "jepa88"){
   # List of modeled species
-  files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)
+  files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)[25]
   }else{
-    
-    files_to_read <- list.files("SARAH PASTE YOUR ROOT PATH HERE",scenario,pattern = cat)
+  files_to_read <- list.files("SARAH PASTE YOUR ROOT PATH HERE",scenario,pattern = cat)
   }
   
   for(s in 1:length(files_to_read)){
   # for(s in 1:5){
-  
+
     if(Sys.info()[8] == "jepa88"){
             load(paste0("/Users/jepa88/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/data/dbem/",scenario,"/",files_to_read[s]))
     }else{
-        
+
       load(paste0('SARAH PASTE YOUR ROOT PATH HERE',scenario,"/",files_to_read[s]))
       
       }

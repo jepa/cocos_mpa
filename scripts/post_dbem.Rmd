@@ -61,13 +61,16 @@ scen_grid <-
 
 # Load DBEM runs
 
-# dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
+dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
 
 
 dbem_runs <- bind_rows(
-  lapply(c("C6GFDL85F1MPAS1","C6GFDL85F1MPAS2","C6GFDL85F1MPAS3"), load_dbem, cat = "Abd")
+  lapply(c("C6GFDL85F1MPAS1",
+           # "C6GFDL85F1MPAS2",
+           "C6GFDL85F1MPAS3"), load_dbem, cat = "Abd")
 )
 
+# Double check all info is loaded
 lapply(c("esm","ssp","scen"), unique)
 
 ```
@@ -87,7 +90,11 @@ dbem_runs %>%
   left_join(scen_grid,
             by = c("index","scen")
             )%>% 
-  filter(year %in% c(1951, 1980, 2010, 2040, 2070,2099)) %>% 
+  filter(year %in% c(1951, 1980, 2010, 2040, 2070,2099),
+         lat > 1,
+         lat < 8,
+         lon < - 83) %>% 
+  # View()
   ggplot() +
   geom_tile(
     aes(
@@ -104,7 +111,7 @@ dbem_runs %>%
   geom_sf(data = coco_sf, aes(), fill = "transparent", color = "black", size = 2) +
   theme(legend.position = "bottom")
 
-ggsave(filename = "../results/abd_scen.png",plot = last_plot(), height = 14)
+ggsave(filename = "../results/catch_scen.png",plot = last_plot(), height = 14)
 
 ```
 ## Linear change by grid
@@ -133,7 +140,7 @@ dbem_runs %>%
     )
   )
   
-ggsave(filename = "../results/abd_scen_lin.png",plot = last_plot())
+ggsave(filename = "../results/catch_scen_lin.png",plot = last_plot())
 
 ```
 ## Liner change by grid
@@ -174,11 +181,12 @@ dbem_runs %>%
     )
   ) %>% 
   filter(!is.na(value_wgt_rm)) %>% 
+  View()
   ggplot() +
   geom_line(
     aes(
       x = as.numeric(year),
-      y = value_wgt_rm,
+      y = value_wgt, # does not like running mean on catch
       color = status,
       linetype = scen
     )

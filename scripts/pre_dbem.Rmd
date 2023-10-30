@@ -549,7 +549,7 @@ write_csv(x = exploited_species,
 
 *Date: 25/10/2023*
 *Job: 16315154* - Time ended 10 hrs 
-*job: 16428711*
+*job: 16428711* - Problem on converting to R data
  
 SppNo           43
  CCSc C6GFDL85
