@@ -53,7 +53,7 @@ scen_grid <-
   mutate(
     status = ifelse(prop == 1,"open",
                     ifelse(prop <= 1,"protected",
-                           ifelse(prop >= 1,"surrouding","outside")
+                           ifelse(prop >= 1,"surrounding","outside")
                     )
     )
   )
@@ -61,22 +61,61 @@ scen_grid <-
 
 # Load DBEM runs
 
-dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
+# dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
 
 
-dbem_runs <- bind_rows(
+# Catch
+dbem_runs_c <- bind_rows(
   lapply(c("C6GFDL85F1MPAS1",
-           # "C6GFDL85F1MPAS2",
-           "C6GFDL85F1MPAS3"), load_dbem, cat = "Abd")
-)
+           "C6GFDL85F1MPAS2",
+           "C6GFDL85F1MPAS3"), load_dbem, cat = "Catch")
+)%>% 
+  mutate(variable = "Catch") %>% 
+  left_join(scen_grid,
+            by = c("index","scen")
+            )
 
-# Double check all info is loaded
-lapply(c("esm","ssp","scen"), unique)
+unique(dbem_runs_c$scen)
+unique(dbem_runs_c$status)
+
+# Abundance
+dbem_runs_a <- bind_rows(
+  lapply(c("C6GFDL85F1MPAS1",
+           "C6GFDL85F1MPAS2",
+           "C6GFDL85F1MPAS3"), load_dbem, cat = "Abd")
+) %>% 
+  mutate(variable = "Abd") %>% 
+  left_join(scen_grid,
+            by = c("index","scen")
+            )
+
+unique(dbem_runs_a$scen)
+unique(dbem_runs_a$status)
+
 
 ```
 
 
 # Preeliminary results
+
+## numbers exploration
+
+There is definitely something wrong with the runs 
+
+- Scen 1 has no abundance on surrounding grids and no catch on surrounding 
+- Scen 2 has no abundance on oppen grids and no catch data on oppen nor protected
+- Scen 3 is the only one working
+
+```{r}
+
+bind_rows(dbem_runs_a,dbem_runs_c) %>% 
+  group_by(scen,variable,status) %>% 
+  summarise(total_value = sum(value, na.rm = T),
+            mean_value = mean(value, na.rm = T)
+            ) %>% 
+  View()
+```
+
 
 ## Map results
 
@@ -87,9 +126,6 @@ dbem_runs %>%
   summarise(
     total_value = sum(value,na.rm = T)
   ) %>% 
-  left_join(scen_grid,
-            by = c("index","scen")
-            )%>% 
   filter(year %in% c(1951, 1980, 2010, 2040, 2070,2099),
          lat > 1,
          lat < 8,
@@ -123,22 +159,20 @@ dbem_runs %>%
   summarise(
     total_value = sum(value,na.rm = T)
   ) %>% 
-  left_join(scen_grid,
-            by = c("index","scen")
-            )%>% 
   group_by(year,status,scen) %>% 
   summarise(
     total_value = sum(total_value,na.rm = T)
   ) %>% 
+  # filter(scen == "S1") %>% 
   ggplot() +
   geom_line(
     aes(
       x = as.numeric(year),
       y = total_value,
-      color = status,
-      linetype = scen
+      color = scen
     )
-  )
+  ) +
+  facet_wrap(~status)
   
 ggsave(filename = "../results/catch_scen_lin.png",plot = last_plot())
 
@@ -160,9 +194,6 @@ dbem_runs %>%
   summarise(
     total_value = sum(value,na.rm = T)
   ) %>% 
-  left_join(scen_grid,
-            by = c("index","scen")
-            ) %>% 
   group_by(year,status,scen) %>% 
   summarise(
     total_value = sum(total_value,na.rm = T)
