@@ -549,28 +549,28 @@ mpa_index <- scenario3 %>%
                              )
                       )
       )
-    ) 
+    ) %>% 
   # 
-  ggplot(mpa_index %>%
-           filter(
-    lat > -5,
-    lat < 10,
-    lon < -80,
-    lon > -95
-  )
-  ) +
-  geom_tile(
-    aes(
-      x = lon,
-      y = lat,
-      fill = prop
-    )
-  ) +
-  scale_fill_viridis_b(alpha = 0.5)
+  # ggplot(mpa_index %>%
+  #          filter(
+  #   lat > -5,
+  #   lat < 10,
+  #   lon < -80,
+  #   lon > -95
+  # )
+  # ) +
+  # geom_tile(
+  #   aes(
+  #     x = lon,
+  #     y = lat,
+  #     fill = prop
+  #   )
+  # ) +
+  # scale_fill_viridis_b(alpha = 0.5)
     
   ## Fix NAs for DBEM 
     arrange(index) %>% 
-    mutate(prop = ifelse(is.na(prop),1.5,prop)) #%>% 
+    mutate(prop = ifelse(is.na(prop),1.5,prop)) %>% 
     select(prop)
   
 name <- paste0(here("data/cocos_3"),".txt")
