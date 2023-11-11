@@ -44,19 +44,49 @@ st_crs(coco_sf) <-4326
 # Scenario grids
 scen_grid <- 
   bind_rows(
-  read.csv("../data/scenario1.csv") %>% mutate(scen = "S1"),
-  read.csv("../data/scenario2.csv") %>%  mutate(scen = "S2"), # Why scenario 2 has prop2 and prop3? using prop for now
-  read.csv("../data/scenario3.csv") %>% mutate(scen = "S3")
-  ) %>% 
-  select(index = Seq, scen, Lat,Lon,prop) %>% 
-  clean_names() %>% 
-  mutate(
+  read.csv("../data/scenario1.csv") %>% mutate(scen = "S1") %>% 
+    mutate(
     status = ifelse(prop == 1,"open",
                     ifelse(prop <= 1,"protected",
                            ifelse(prop >= 1,"surrounding","outside")
                     )
     )
+  ),
+  read.csv("../data/scenario2.csv") %>%  mutate(scen = "S2") %>% 
+    mutate(
+    status = ifelse(prop == 1.5,"open",
+                    ifelse(prop < 1,"protected",
+                           ifelse(prop >= 1 & prop < 1.5,"surrounding","outside")
+                    )
+    )
+  ), # Why scenario 2 has prop2 and prop3? using prop for now
+  read.csv("../data/scenario3.csv") %>% mutate(scen = "S3") %>% 
+    mutate(
+    status = ifelse(prop == 1.5,"open",
+                    ifelse(prop < 1,"protected",
+                           ifelse(prop >= 1.5,"surrounding","outside")
+                    )
+    )
   )
+  ) %>% 
+  select(index = Seq, scen, Lat,Lon,prop,status) %>% 
+  clean_names() %>% 
+  # For now until we fix the IDs
+  mutate(status = ifelse(status != "protected","unprotected",status))
+
+
+# Test labels
+
+ggplot(scen_grid) +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = status
+    )
+  ) +
+  facet_wrap(~scen)
+
 
 
 # Load DBEM runs
@@ -92,6 +122,11 @@ dbem_runs_a <- bind_rows(
 unique(dbem_runs_a$scen)
 unique(dbem_runs_a$status)
 
+dbem_runs <- bind_rows(dbem_runs_a,dbem_runs_c) %>% 
+  # For now until we fix the IDs
+  mutate(status = ifelse(status != "protected","unprotected",status))
+
+
 
 ```
 
@@ -108,7 +143,7 @@ There is definitely something wrong with the runs
 
 ```{r}
 
-bind_rows(dbem_runs_a,dbem_runs_c) %>% 
+dbem_runs %>% 
   group_by(scen,variable,status) %>% 
   summarise(total_value = sum(value, na.rm = T),
             mean_value = mean(value, na.rm = T)
@@ -122,11 +157,11 @@ bind_rows(dbem_runs_a,dbem_runs_c) %>%
 ```{r}
 
 dbem_runs %>% 
-  group_by(index,year,scen) %>% 
+  group_by(index,year,variable,scen,lat,lon) %>% 
   summarise(
     total_value = sum(value,na.rm = T)
   ) %>% 
-  filter(year %in% c(1951, 1980, 2010, 2040, 2070,2099),
+  filter(year %in% c(1951, 1980, 2040),
          lat > 1,
          lat < 8,
          lon < - 83) %>% 
@@ -142,12 +177,12 @@ dbem_runs %>%
   ) +
   scale_fill_viridis_b() +
   scale_color_viridis_b() +
-  facet_grid(year~scen) +
+  facet_grid(year~scen+variable) +
   geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "red", size = 2) +
   geom_sf(data = coco_sf, aes(), fill = "transparent", color = "black", size = 2) +
   theme(legend.position = "bottom")
 
-ggsave(filename = "../results/catch_scen.png",plot = last_plot(), height = 14)
+ggsave(filename = "../results/abd_catch_scen.png",plot = last_plot(), height = 14)
 
 ```
 ## Linear change by grid
@@ -155,13 +190,9 @@ ggsave(filename = "../results/catch_scen.png",plot = last_plot(), height = 14)
 ```{r}
 
 dbem_runs %>% 
-  group_by(index,year,scen) %>% 
+  group_by(year,scen,status,variable) %>% 
   summarise(
     total_value = sum(value,na.rm = T)
-  ) %>% 
-  group_by(year,status,scen) %>% 
-  summarise(
-    total_value = sum(total_value,na.rm = T)
   ) %>% 
   # filter(scen == "S1") %>% 
   ggplot() +
@@ -172,11 +203,13 @@ dbem_runs %>%
       color = scen
     )
   ) +
-  facet_wrap(~status)
+  facet_wrap(variable~status,
+             scales = "free")
   
 ggsave(filename = "../results/catch_scen_lin.png",plot = last_plot())
 
 ```
+
 ## Liner change by grid
 
 This is weighted method of abundance by grid type/number of grids
@@ -190,11 +223,11 @@ n_status <- scen_grid %>%
 
 # Show result
 dbem_runs %>% 
-  group_by(index,year,scen) %>% 
+  group_by(index,year,scen,status,variable) %>% 
   summarise(
     total_value = sum(value,na.rm = T)
   ) %>% 
-  group_by(year,status,scen) %>% 
+  group_by(year,status,scen,variable) %>% 
   summarise(
     total_value = sum(total_value,na.rm = T)
   ) %>% 
@@ -202,26 +235,19 @@ dbem_runs %>%
             by = c("status","scen")
             ) %>% 
   mutate(value_wgt = total_value/n) %>% 
-  group_by(status,scen) %>% 
-  mutate(
-    value_wgt_rm = round(zoo::rollmean(
-      value_wgt,
-      k = 10, 
-      fill = NA, 
-      align = "left")
-    )
-  ) %>% 
-  filter(!is.na(value_wgt_rm)) %>% 
-  View()
+  # Testing
+  # filter(variable =="Catch") %>%
+  # View()
   ggplot() +
   geom_line(
     aes(
       x = as.numeric(year),
-      y = value_wgt, # does not like running mean on catch
-      color = status,
-      linetype = scen
+      y = value_wgt,
+      color = scen
     )
-  )
+  ) +
+  facet_wrap(status~variable,
+             scales = "free")
   
 
 ```
