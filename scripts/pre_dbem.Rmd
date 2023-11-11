@@ -496,6 +496,88 @@ lapply(scenarios, grid_to_dbem)
 
 ```
 
+## Double check grid
+
+```{r}
+
+read.table("~/GitHub/cocos_mpa/data/cocos_3.txt", quote="\"", comment.char="") %>%
+  bind_cols(MyFunctions::my_data(data = "dbem_coords")) %>%
+  filter(
+    lat > -5,
+    lat < 10,
+    lon < -80,
+    lon > -95
+  ) %>% 
+    # Double check matched DBEM grid (note it changes each scenario)
+    mutate(
+      status = ifelse(V1 == 1.5,"open",
+                      ifelse(V1 < 1,"protected",
+                             ifelse(V1 > 1 & V1 < 1.5,"surrouding","outside")
+                      )
+      )
+    ) %>% 
+  # View()
+  ggplot() +
+  geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "black") +
+  geom_sf(data = coco_sf, aes(), fill = "transparent", color = "red") +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = status
+    )
+  ) +
+  scale_fill_viridis_d(alpha = 0.5)
+
+```
+
+## Fix scenarios
+
+```{r}
+scenario2 <- read_csv("../data/scenario2.csv")
+
+mpa_index <- scenario2 %>% 
+    rename(index = Seq) %>% 
+    right_join(dbem_coords,
+               by ="index") %>% 
+  #   # Double check matched DBEM grid (it does)
+    mutate(
+      status = ifelse(prop == 1,"open",
+                      ifelse(prop <= 1,"protected",
+                             ifelse(prop >= 1,"surrouding","outside")
+                      )
+      )
+    ) #%>% 
+  # 
+  ggplot(mpa_index %>%
+           filter(
+    lat > -5,
+    lat < 10,
+    lon < -80,
+    lon > -95
+  )
+  ) +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = prop
+    )
+  ) +
+  scale_fill_viridis_b(alpha = 0.5)
+    
+  ## Fix NAs for DBEM 
+    arrange(index) %>% 
+    mutate(prop = ifelse(is.na(prop),1.5,prop))# %>% 
+    select(prop)
+  
+name <- paste0(here("data/cocos_2"),".txt")
+write.table(mpa_index, file=name, sep="\t", col.names = F, row.names = F)
+
+
+```
+
+
 # Species
 
 ```{r spp_data, eval = F, echo = F}
