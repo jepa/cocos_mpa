@@ -534,20 +534,22 @@ read.table("~/GitHub/cocos_mpa/data/cocos_3.txt", quote="\"", comment.char="") %
 ## Fix scenarios
 
 ```{r}
-scenario2 <- read_csv("../data/scenario2.csv")
+scenario3 <- read_csv("../data/scenario3.csv")
 
-mpa_index <- scenario2 %>% 
+mpa_index <- scenario3 %>% 
     rename(index = Seq) %>% 
     right_join(dbem_coords,
                by ="index") %>% 
   #   # Double check matched DBEM grid (it does)
     mutate(
-      status = ifelse(prop == 1,"open",
+      status = ifelse(prop == 1.5,"open",
                       ifelse(prop <= 1,"protected",
-                             ifelse(prop >= 1,"surrouding","outside")
+                             ifelse( prop > 1.5,"surrouding",
+                             "outside"
+                             )
                       )
       )
-    ) #%>% 
+    ) 
   # 
   ggplot(mpa_index %>%
            filter(
@@ -568,10 +570,10 @@ mpa_index <- scenario2 %>%
     
   ## Fix NAs for DBEM 
     arrange(index) %>% 
-    mutate(prop = ifelse(is.na(prop),1.5,prop))# %>% 
+    mutate(prop = ifelse(is.na(prop),1.5,prop)) #%>% 
     select(prop)
   
-name <- paste0(here("data/cocos_2"),".txt")
+name <- paste0(here("data/cocos_3"),".txt")
 write.table(mpa_index, file=name, sep="\t", col.names = F, row.names = F)
 
 
