@@ -429,11 +429,31 @@ scale_color_manual(values = c("darkred", "blue"))
 ### 2.4 Clean up the dataset 
 
 ```{r}
-names <- c("Seq", "Lat", "Lon", "prop")
+names <- c("Seq", "Lat", "Lon", "prop", "status")
+
+#ADD IN STATUS 
+grid_sc1 <- grid_sc1 %>% mutate(status = case_when(protected_area_coco_m2 > 0 ~ "protected",protected_area_ammb_m2 > 0 ~ "protected", surrounding_ammb == "surrounding_ammb" ~ "surrounding")) 
+grid_sc1 <- grid_sc1 %>% mutate(status = replace_na(status, "open"))
+
+grid_sc2 <- grid_sc2 %>% mutate(status = case_when(protected_area_coco_m2 > 0 ~ "protected",protected_area_ammb_m2 > 0 ~ "surrounding", surrounding_coco == "surrounding_coco" ~ "surrounding")) 
+grid_sc2 <- grid_sc2 %>% mutate(status = replace_na(status, "open"))
+
+grid_sc3 <- grid_sc3 %>% mutate(status = case_when(protected_area_coco_m2 > 0 ~ "protected", surrounding_coco == "surrounding_coco" ~ "surrounding")) 
+grid_sc3 <- grid_sc3 %>% mutate(status = replace_na(status, "open"))
+
+ggplot() + geom_sf(data = grid_sc1, aes(fill = status)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+
+ggplot() + geom_sf(data = grid_sc2, aes(fill = status)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+
+ggplot() + geom_sf(data = grid_sc3, aes(fill = status)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue"))
+                                                                                                
 
 sc1 <- grid_sc1 %>% st_drop_geometry() %>% dplyr::select(names)
 sc3 <- grid_sc3 %>% st_drop_geometry() %>% dplyr::select(names)
-sc2 <- grid_sc2 %>% st_drop_geometry() %>% dplyr::select(Seq, Lat, Lon, prop, prop2, prop3)
+sc2 <- grid_sc2 %>% st_drop_geometry() %>% dplyr::select(Seq, Lat, Lon, prop, status, prop2, prop3)
 
 
 write.csv(sc1, "data/scenario1.csv")
