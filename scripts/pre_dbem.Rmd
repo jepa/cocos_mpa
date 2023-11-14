@@ -456,9 +456,9 @@ sc3 <- grid_sc3 %>% st_drop_geometry() %>% dplyr::select(names)
 sc2 <- grid_sc2 %>% st_drop_geometry() %>% dplyr::select(Seq, Lat, Lon, prop, status, prop2, prop3)
 
 
-write.csv(sc1, "data/scenario1.csv")
-write.csv(sc2, "data/scenario2.csv")
-write.csv(sc3, "data/scenario3.csv")
+write.csv(sc1, "../data/scenario1.csv")
+write.csv(sc2, "../data/scenario2.csv")
+write.csv(sc3, "../data/scenario3.csv")
 
 ```
 
