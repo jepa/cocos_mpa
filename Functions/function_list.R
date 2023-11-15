@@ -17,11 +17,12 @@ load_dbem <- function(scenario, cat = "Catch"){
   
   if(Sys.info()[8] == "jepa88"){
   # List of modeled species
-  files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)[25]
+  files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)
   }else{
   files_to_read <- list.files("SARAH PASTE YOUR ROOT PATH HERE",scenario,pattern = cat)
   }
   
+  print(length(files_to_read))
   for(s in 1:length(files_to_read)){
   # for(s in 1:5){
 

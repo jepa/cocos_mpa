@@ -44,35 +44,14 @@ st_crs(coco_sf) <-4326
 # Scenario grids
 scen_grid <- 
   bind_rows(
-  read.csv("../data/scenario1.csv") %>% mutate(scen = "S1") %>% 
-    mutate(
-    status = ifelse(prop == 1,"open",
-                    ifelse(prop <= 1,"protected",
-                           ifelse(prop >= 1,"surrounding","outside")
-                    )
-    )
-  ),
-  read.csv("../data/scenario2.csv") %>%  mutate(scen = "S2") %>% 
-    mutate(
-    status = ifelse(prop == 1.5,"open",
-                    ifelse(prop < 1,"protected",
-                           ifelse(prop >= 1 & prop < 1.5,"surrounding","outside")
-                    )
-    )
-  ), # Why scenario 2 has prop2 and prop3? using prop for now
-  read.csv("../data/scenario3.csv") %>% mutate(scen = "S3") %>% 
-    mutate(
-    status = ifelse(prop == 1.5,"open",
-                    ifelse(prop < 1,"protected",
-                           ifelse(prop >= 1.5,"surrounding","outside")
-                    )
-    )
-  )
+  read.csv("../data/scenario1.csv") %>% mutate(scen = "S1"),
+  read.csv("../data/scenario2.csv") %>%  mutate(scen = "S2"),
+  read.csv("../data/scenario3.csv") %>% mutate(scen = "S3")
   ) %>% 
   select(index = Seq, scen, Lat,Lon,prop,status) %>% 
-  clean_names() %>% 
+  clean_names()# %>% 
   # For now until we fix the IDs
-  mutate(status = ifelse(status != "protected","unprotected",status))
+  # mutate(status = ifelse(status != "protected","unprotected",status))
 
 
 # Test labels
@@ -85,7 +64,10 @@ ggplot(scen_grid) +
       fill = status
     )
   ) +
-  facet_wrap(~scen)
+  facet_wrap(~scen) +
+  geom_sf(data = ammb_sf %>% mutate(layer = "ammb"), aes(color = layer), fill = "transparent") +
+  geom_sf(data = coco_sf %>% mutate(layer = "cocos"), aes(color = layer), fill = "transparent") +
+  scale_color_viridis_d()
 
 
 
@@ -122,11 +104,10 @@ dbem_runs_a <- bind_rows(
 unique(dbem_runs_a$scen)
 unique(dbem_runs_a$status)
 
-dbem_runs <- bind_rows(dbem_runs_a,dbem_runs_c) %>% 
-  # For now until we fix the IDs
-  mutate(status = ifelse(status != "protected","unprotected",status))
 
+dbem_runs <- bind_rows(dbem_runs_a,dbem_runs_c)
 
+length(unique(dbem_runs$taxon_key))
 
 ```
 
@@ -185,7 +166,7 @@ dbem_runs %>%
 ggsave(filename = "../results/abd_catch_scen.png",plot = last_plot(), height = 14)
 
 ```
-## Linear change by grid
+## Linear trend by year
 
 ```{r}
 
@@ -210,7 +191,7 @@ ggsave(filename = "../results/catch_scen_lin.png",plot = last_plot())
 
 ```
 
-## Liner change by grid
+## Linear trend by year (weighted)
 
 This is weighted method of abundance by grid type/number of grids
 
@@ -251,3 +232,51 @@ dbem_runs %>%
   
 
 ```
+
+# Per change
+
+
+```{r}
+
+dbem_runs %>% 
+  group_by(index,year,variable,scen,lat,lon) %>% 
+  summarise(
+    total_value = sum(value,na.rm = T),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    period = ifelse(year %in% seq(1995,2014,1),"history",
+                    ifelse(year %in% seq(2030,2049,1),"mid",NA))
+  ) %>% 
+  filter(!is.na(period)) %>% 
+  group_by(index,variable,scen,lat,lon,period) %>% 
+  summarise(
+    mean_variable = mean(total_value, na.rm = T),
+    .groups = "drop"
+  ) %>% 
+  group_by(index,variable,scen,lat,lon) %>% 
+  mutate(ratio = (lag(mean_variable)-mean_variable)/mean_variable) %>%
+  # mutate(ratio = mean_variable/lag(mean_variable)) %>% 
+  filter(!is.na(ratio)) %>% 
+  ggplot() +
+  geom_tile(
+  # metR::geom_contour_fill(
+    aes(
+      x = lon,
+      y = lat,
+      # z = ratio,
+      fill = ratio
+    )#,
+    # bins = 5
+  ) +
+  facet_wrap(~variable + scen) +
+  scale_fill_gradient2()
+  
+         
+  
+  
+  
+  
+  
+```
+
