@@ -25,6 +25,11 @@ This project is a sub-component of a larger project and will be integrated with 
 - Results for each scenario and species
 - *mini report* with methods, results and description of results
 
+## Specific outputs
+- Estimates of changes in biomass of pelagic fishery species under future climate scenarios.
+- Estimates of potential biomass gains for tuna species resulting from the implementation and expansion of the ACMC.
+- Maps of potential climate refuges and areas of high climate impacts within the ACMC.
+
 # Methodology
 
 - Develop different scenarios with Taylor and MarViva
