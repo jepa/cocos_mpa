@@ -20,7 +20,7 @@ Repository for project on Isla Cocos and Bicentenario in Costa Rica with MarViva
 - **November/December**, Write report (S+J)
 - **December**,report due date (Hard deadline)
 
-# Outputs
+# Deliverables
 This project is a sub-component of a larger project and will be integrated with a larger report. Specifically we require to provide:
 - Results for each scenario and species
 - *mini report* with methods, results and description of results
