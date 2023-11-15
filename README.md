@@ -21,9 +21,9 @@ Repository for project on Isla Cocos and Bicentenario in Costa Rica with MarViva
 - **December**,report due date (Hard deadline)
 
 # Deliverables
-This project is a sub-component of a larger project and will be integrated with a larger report. Specifically we require to provide:
+This project is a sub-component of a larger project and will be integrated with a larger report. The report should have a summary of trends for all species aggregated and figures for all species should be avaiable. Specifically we need:
 - Results for each scenario and species
-- *mini report* with methods, results and description of results
+- *mini report* with methods, results and description of results.
 
 ## Specific outputs
 - Estimates of changes in biomass of pelagic fishery species under future climate scenarios.
