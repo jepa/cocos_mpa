@@ -1,11 +1,148 @@
 # DBEM runs
 
-## Runs for GFDL 8.5
+## Runs for IPSL 2.6
+
+### Scenario 3
+*Date: 15/11/2023*
+*Job: 18467483* (4 CPU-N) - Fail Node
+ SppNo           43
+ CCSc C6IPSL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6IPSL26F1MPAS3
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_3
+
+### Scenario 2
+*Date: 15/11/2023*
+*Job: 18467179* (6 CPU) 
+
+ SppNo           43
+ CCSc C6IPSL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6IPSL26F1MPAS2
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
+### Scenario 1
+*Date: 15/11/2023*
+*Job: 18467027* 
+
+ SppNo           43
+ CCSc C6IPSL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6IPSL26F1MPAS1
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_1
+
+
+## Runs for IPSL 8.5
+
+### Scenario 3
+
+*Date: 15/11/2023*
+*Job: * 
+
+ 
+### Scenario 2
+
+*Date: 15/11/2023*
+*Job: 18470737* - Fail Node
+
+SppNo           43
+ CCSc C6IPSL85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6IPSL85F1MPAS2
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
+
+### Scenario 1
+
+*Date: 15/11/2023*
+*Job: 18468638* 
+
+SppNo           43
+ CCSc C6IPSL85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6IPSL85F1MPAS1
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_1
+
+## Runs for GFDL 2.6
+
+### Scenario 3
+*Date: 15/11/2023*
+*Job: 18466682* (4 CPU)
+
+SppNo           43
+ CCSc C6GFDL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6GFDL26F1MPAS3
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_3
+
+
+### Scenario 2
+*Date: 15/11/2023*
+*Job: 18465293* (2 CPU)
+
+ SppNo           43
+ CCSc C6GFDL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6GFDL26F1MPAS2
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
+### Scenario 1
+
+*Date: 15/11/2023*
+*Job: 18464547* (1 CPU) - Job Wall-clock time: 1-00:06:06
+
+ SppNo           43
+ CCSc C6GFDL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6GFDL26F1MPAS1
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_1
+
+## Runs for GFDL 8.5 (COMPLETED)
 
 ### Scenario 3
 
 *Date: 10/11/2023*
-*Job: 18048756* - 
+*Job: 18048756* - Successfull run
 
 SppNo           43
  CCSc C6GFDL85
@@ -52,7 +189,7 @@ SppNo           43
 ### Scenario 2
 
 *Date: 10/11/2023*
-*Job: 18048475*
+*Job: 18048475* - Successfull run
                                                
  SppNo           43
  CCSc C6GFDL85
@@ -100,7 +237,7 @@ SppNo           43
 ### Scenario 1
 
 *Date: 08/11/23*
-*Job: 17755707*
+*Job: 17755707* - Successfull run
 
  SppNo           43
  CCSc C6GFDL85
