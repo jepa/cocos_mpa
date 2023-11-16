@@ -4,8 +4,7 @@
 
 ### Scenario 3
 *Date: 15/11/2023*
-*Job: 18467483* (4 CPU-N) 
-
+*Job: 18467483* (4 CPU-N) - Fail Node
  SppNo           43
  CCSc C6IPSL26
  SSP SSP126
@@ -59,7 +58,7 @@
 ### Scenario 2
 
 *Date: 15/11/2023*
-*Job: 18470737* 
+*Job: 18470737* - Fail Node
 
 SppNo           43
  CCSc C6IPSL85
@@ -125,7 +124,7 @@ SppNo           43
 ### Scenario 1
 
 *Date: 15/11/2023*
-*Job: 18464547* (1 CPU)
+*Job: 18464547* (1 CPU) - Job Wall-clock time: 1-00:06:06
 
  SppNo           43
  CCSc C6GFDL26
@@ -138,7 +137,7 @@ SppNo           43
  FEEZ    1.00
  MPApath cocos_1
 
-## Runs for GFDL 8.5
+## Runs for GFDL 8.5 (COMPLETED)
 
 ### Scenario 3
 
