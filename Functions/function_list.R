@@ -22,7 +22,7 @@ load_dbem <- function(scenario, cat = "Catch"){
   files_to_read <- list.files("SARAH PASTE YOUR ROOT PATH HERE",scenario,pattern = cat)
   }
   
-  print(length(files_to_read))
+  
   for(s in 1:length(files_to_read)){
   # for(s in 1:5){
 
