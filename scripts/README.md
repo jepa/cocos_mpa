@@ -18,7 +18,7 @@
 
 ### Scenario 2
 *Date: 15/11/2023*
-*Job: 18467179* (6 CPU) 
+*Job: 18467179* (6 CPU) - Job Wall-clock time: 1-03:04:16
 
  SppNo           43
  CCSc C6IPSL26
@@ -108,7 +108,7 @@ SppNo           43
 
 ### Scenario 2
 *Date: 15/11/2023*
-*Job: 18465293* (2 CPU)
+*Job: 18465293* (2 CPU) - Job Wall-clock time: 1-02:00:26
 
  SppNo           43
  CCSc C6GFDL26
