@@ -3,6 +3,20 @@
 ## Runs for IPSL 2.6
 
 ### Scenario 3
+*Date: 26/11/2023*
+*Job: 19290901* - 
+
+  SppNo           43
+ CCSc C6IPSL26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6IPSL26F1MPAS3
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_3
+
 *Date: 15/11/2023*
 *Job: 18467483* (4 CPU-N) - Fail Node
  SppNo           43
@@ -56,6 +70,21 @@
 
  
 ### Scenario 2
+
+*Date: 26/11/2023*
+*Job: 19290428* - 
+
+SppNo           43
+ CCSc C6IPSL85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6IPSL85F1MPAS2
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
 
 *Date: 15/11/2023*
 *Job: 18470737* - Fail Node
