@@ -65,8 +65,19 @@
 
 ### Scenario 3
 
-*Date: 15/11/2023*
-*Job: * 
+*Date: 28/11/2023*
+*Job: 19428632* 
+SppNo           43
+ CCSc C6IPSL85
+ SSP SSP585
+ rsfile	RunSppCocos
+ rpath C6IPSL85F1MPAS3
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_3
+
 
  
 ### Scenario 2
