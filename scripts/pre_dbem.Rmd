@@ -602,6 +602,8 @@ write.table(mpa_index, file=name, sep="\t", col.names = F, row.names = F)
 
 # Species
 
+## Set species list
+
 ```{r spp_data, eval = F, echo = F}
 
 # ETP important species
@@ -625,3 +627,25 @@ write_csv(x = exploited_species,
 
 
 ```
+
+## Double check species distributions
+
+
+```{r}
+
+# Get project specie's list
+project_species_list <- read_csv("../data/project_species_list.csv")
+
+spp <- pull(project_species_list,taxon_key)
+
+# RUn for one species
+# suppressMessages(
+# distribution_check(600006,project_species_list)
+# )
+
+# Run for all speices
+suppressMessages(
+  lapply(spp, distribution_check, spp_data = project_species_list)
+)
+```
+

@@ -67,10 +67,19 @@ load_dbem <- function(scenario, cat = "Catch"){
 
 # Check original distributions
 
-distribution_check <- function(spp){
+distribution_check <- function(spp, spp_data){
+  
+  # Get global variables
+  spp <- spp_data %>% 
+    filter(taxon_key %in% spp) %>% 
+    pull(taxon_key)
+  
+  taxa <- spp_data %>% 
+    filter(taxon_key %in% spp) %>% 
+    pull(common_name)
   
   
-  def_map <- readr:: read_csv(paste0("~/Library/CloudStorage/OneDrive-UBC/Data/dbem/Distributions/S",spp,".csv"), 
+  def_map <- readr:: read_csv(paste0("~/Library/CloudStorage/OneDrive-UBC/Data/dbem/def_distributions/S",spp,".csv"), 
                               col_names = FALSE) %>% 
     bind_cols(MyFunctions::my_data("dbem_coords")) %>% 
     filter(X1 > 0) %>% 
@@ -84,7 +93,7 @@ distribution_check <- function(spp){
       )
     ) +
     scale_fill_viridis_b() +
-    ggtitle(paste("Def. distribution for",spp))
+    ggtitle(paste("Def. distribution for",spp,taxa))
   
   rrg_map <- readr:: read_csv(paste0("~/Library/CloudStorage/OneDrive-UBC/Data/dbem/rrg_distributions/S",spp,".csv"), 
                               col_names = FALSE) %>% 
@@ -100,7 +109,7 @@ distribution_check <- function(spp){
       )
     ) +
     scale_fill_viridis_b() +
-    ggtitle(paste("Rrg. distribution for",spp))
+    ggtitle(paste("Rrg. distribution for",spp,taxa))
   
   
   maps <- gridExtra::grid.arrange(def_map,rrg_map)
