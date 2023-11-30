@@ -10,7 +10,7 @@ load_pkg <- function(pkg_list){
 }
 
 
-# Read data and gorup them
+# Read data and group them
 
 load_dbem <- function(scenario, cat = "Catch"){
   
@@ -62,4 +62,52 @@ load_dbem <- function(scenario, cat = "Catch"){
   
   return(final_df)
   
+}
+
+
+# Check original distributions
+
+distribution_check <- function(spp){
+  
+  
+  def_map <- readr:: read_csv(paste0("~/Library/CloudStorage/OneDrive-UBC/Data/dbem/Distributions/S",spp,".csv"), 
+                              col_names = FALSE) %>% 
+    bind_cols(MyFunctions::my_data("dbem_coords")) %>% 
+    filter(X1 > 0) %>% 
+    ggplot() +
+    geom_sf(data = rnaturalearth::ne_countries(scale = "small", returnclass = c("sf")), aes()) +
+    geom_tile(
+      aes(
+        x = lon,
+        y = lat,
+        fill = X1
+      )
+    ) +
+    scale_fill_viridis_b() +
+    ggtitle(paste("Def. distribution for",spp))
+  
+  rrg_map <- readr:: read_csv(paste0("~/Library/CloudStorage/OneDrive-UBC/Data/dbem/rrg_distributions/S",spp,".csv"), 
+                              col_names = FALSE) %>% 
+    bind_cols(MyFunctions::my_data("dbem_coords")) %>% 
+    filter(X1 > 0) %>% 
+    ggplot() +
+    geom_sf(data = rnaturalearth::ne_countries(scale = "small", returnclass = c("sf")), aes()) +
+    geom_tile(
+      aes(
+        x = lon,
+        y = lat,
+        fill = X1
+      )
+    ) +
+    scale_fill_viridis_b() +
+    ggtitle(paste("Rrg. distribution for",spp))
+  
+  
+  maps <- gridExtra::grid.arrange(def_map,rrg_map)
+  
+  ggsave(filename = paste0("../data/distributions/",spp,".png"),
+         plot = maps,
+         height = 7,
+         width = 7
+  )
 }
