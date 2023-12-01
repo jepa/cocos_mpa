@@ -25,6 +25,61 @@ select <- dplyr::select
 
 ```
 
+# Average ESM data (NO RUN)
+
+```{r average_esm, eval = F, echo = F}
+
+
+# Load DBEM runs
+
+# dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
+model_list <- c(
+  "C6GFDL85F1MPAS1","C6GFDL85F1MPAS2","C6GFDL85F1MPAS3", # GFDL 85
+  "C6GFDL26F1MPAS1","C6GFDL26F1MPAS2","C6GFDL26F1MPAS3", # GFDL 26
+  "C6IPSL85F1MPAS1","C6IPSL85F1MPAS2","C6IPSL85F1MPAS3", # IPSL 85
+  "C6IPSL26F1MPAS1","C6IPSL26F1MPAS2","C6IPSL26F1MPAS3", # IPSL 26
+  NULL
+  ) 
+
+# Catch (average by ESMs)
+dbem_runs_c <- bind_rows(
+  lapply(model_list,
+         load_dbem, cat = "Catch")
+) %>% 
+  group_by(index,year,taxon_key,scen,ssp) %>% 
+  summarise(
+        sd_value = sd(value, na.rm = T),
+        mean_value = mean(value, na.rm = T)
+  ) %>% 
+  mutate(variable = "Catch") %>%
+  left_join(scen_grid,
+            by = c("index","scen")
+            ) %>% 
+  filter(!is.na(mean_value))
+
+write_csv(dbem_runs_c,"../data/dbem_runs_catch.csv")
+
+# Abundance
+dbem_runs_a <- bind_rows(
+  lapply(model_list,
+         load_dbem, cat = "Abd")
+) %>% 
+  group_by(index,year,taxon_key,scen,ssp) %>% 
+  summarise(
+        sd_value = sd(value, na.rm = T),
+        mean_value = mean(value, na.rm = T)
+  ) %>% 
+  mutate(variable = "Abd") %>%
+  left_join(scen_grid,
+            by = c("index","scen")
+            ) %>% 
+  filter(!is.na(mean_value))
+
+write_csv(dbem_runs_a,"../data/dbem_runs_abd.csv")
+
+```
+
+
 # Load data
 
 ```{r}
@@ -38,8 +93,6 @@ st_crs(ammb_sf) <-4326
 coco_sf <- st_read(MyFunctions::my_path("D","spatial/coco","PN_IslaCoco_CostaRica.shp")) %>% 
   st_transform(4326)
 st_crs(coco_sf) <-4326
-
-
 
 # Scenario grids
 scen_grid <- 
@@ -56,60 +109,29 @@ scen_grid <-
 
 # Test labels
 
-ggplot(scen_grid) +
-  geom_tile(
-    aes(
-      x = lon,
-      y = lat,
-      fill = status
-    )
-  ) +
-  facet_wrap(~scen) +
-  geom_sf(data = ammb_sf %>% mutate(layer = "ammb"), aes(color = layer), fill = "transparent") +
-  geom_sf(data = coco_sf %>% mutate(layer = "cocos"), aes(color = layer), fill = "transparent") +
-  scale_color_viridis_d()
+# ggplot(scen_grid) +
+#   geom_tile(
+#     aes(
+#       x = lon,
+#       y = lat,
+#       fill = status
+#     )
+#   ) +
+#   facet_wrap(~scen) +
+#   geom_sf(data = ammb_sf %>% mutate(layer = "ammb"), aes(color = layer), fill = "transparent") +
+#   geom_sf(data = coco_sf %>% mutate(layer = "cocos"), aes(color = layer), fill = "transparent") +
+#   scale_color_viridis_d()
 
+dbem_runs <- bind_rows(
+  read_csv("../data/dbem_runs_abd.csv"),
+  read_csv("../data/dbem_runs_catch.csv")
+)
 
+head(dbem_runs)
 
-# Load DBEM runs
-
-# dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
-
-
-# Catch
-dbem_runs_c <- bind_rows(
-  lapply(c("C6GFDL85F1MPAS1",
-           "C6GFDL85F1MPAS2",
-           "C6GFDL85F1MPAS3"), load_dbem, cat = "Catch")
-)%>% 
-  mutate(variable = "Catch") %>% 
-  left_join(scen_grid,
-            by = c("index","scen")
-            )
-
-unique(dbem_runs_c$scen)
-unique(dbem_runs_c$status)
-
-# Abundance
-dbem_runs_a <- bind_rows(
-  lapply(c("C6GFDL85F1MPAS1",
-           "C6GFDL85F1MPAS2",
-           "C6GFDL85F1MPAS3"), load_dbem, cat = "Abd")
-) %>% 
-  mutate(variable = "Abd") %>% 
-  left_join(scen_grid,
-            by = c("index","scen")
-            )
-
-unique(dbem_runs_a$scen)
-unique(dbem_runs_a$status)
-
-
-dbem_runs <- bind_rows(dbem_runs_a,dbem_runs_c)
-
-length(unique(dbem_runs$taxon_key))
 
 ```
+
 
 
 # Preeliminary results
@@ -125,9 +147,9 @@ There is definitely something wrong with the runs
 ```{r}
 
 dbem_runs %>% 
-  group_by(scen,variable,status) %>% 
-  summarise(total_value = sum(value, na.rm = T),
-            mean_value = mean(value, na.rm = T)
+  group_by(scen,ssp,variable,status) %>% 
+  summarise(total_value = sum(mean_value, na.rm = T),
+            mean_value = mean(mean_value, na.rm = T)
             ) %>% 
   View()
 ```
@@ -138,9 +160,9 @@ dbem_runs %>%
 ```{r}
 
 dbem_runs %>% 
-  group_by(index,year,variable,scen,lat,lon) %>% 
+  group_by(index,year,variable,scen,ssp,lat,lon) %>% 
   summarise(
-    total_value = sum(value,na.rm = T)
+    total_value = sum(mean_value,na.rm = T)
   ) %>% 
   filter(year %in% c(1951, 1980, 2040),
          lat > 1,
@@ -158,7 +180,7 @@ dbem_runs %>%
   ) +
   scale_fill_viridis_b() +
   scale_color_viridis_b() +
-  facet_grid(year~scen+variable) +
+  facet_grid(ssp+year~scen+variable) +
   geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "red", size = 2) +
   geom_sf(data = coco_sf, aes(), fill = "transparent", color = "black", size = 2) +
   theme(legend.position = "bottom")
@@ -171,9 +193,9 @@ ggsave(filename = "../results/abd_catch_scen.png",plot = last_plot(), height = 1
 ```{r}
 
 dbem_runs %>% 
-  group_by(year,scen,status,variable) %>% 
+  group_by(year,scen,status,ssp,variable) %>% 
   summarise(
-    total_value = sum(value,na.rm = T)
+    total_value = sum(mean_value,na.rm = T)
   ) %>% 
   # filter(scen == "S1") %>% 
   ggplot() +
@@ -184,7 +206,7 @@ dbem_runs %>%
       color = scen
     )
   ) +
-  facet_wrap(variable~status,
+  facet_wrap(ssp+variable~status,
              scales = "free")
   
 ggsave(filename = "../results/catch_scen_lin.png",plot = last_plot())
@@ -204,11 +226,11 @@ n_status <- scen_grid %>%
 
 # Show result
 dbem_runs %>% 
-  group_by(index,year,scen,status,variable) %>% 
+  group_by(index,year,ssp,scen,status,variable) %>% 
   summarise(
-    total_value = sum(value,na.rm = T)
+    total_value = sum(mean_value,na.rm = T)
   ) %>% 
-  group_by(year,status,scen,variable) %>% 
+  group_by(year,status,ssp,scen,variable) %>% 
   summarise(
     total_value = sum(total_value,na.rm = T)
   ) %>% 
@@ -227,7 +249,7 @@ dbem_runs %>%
       color = scen
     )
   ) +
-  facet_wrap(status~variable,
+  facet_wrap(ssp+status~variable,
              scales = "free")
   
 
@@ -239,9 +261,9 @@ dbem_runs %>%
 ```{r}
 
 dbem_runs %>% 
-  group_by(index,year,variable,scen,lat,lon) %>% 
+  group_by(index,year,variable,ssp,scen,lat,lon) %>% 
   summarise(
-    total_value = sum(value,na.rm = T),
+    total_value = sum(mean_value,na.rm = T),
     .groups = "drop"
   ) %>% 
   mutate(
@@ -249,12 +271,12 @@ dbem_runs %>%
                     ifelse(year %in% seq(2030,2049,1),"mid",NA))
   ) %>% 
   filter(!is.na(period)) %>% 
-  group_by(index,variable,scen,lat,lon,period) %>% 
+  group_by(index,variable,scen,ssp,lat,lon,period) %>% 
   summarise(
     mean_variable = mean(total_value, na.rm = T),
     .groups = "drop"
   ) %>% 
-  group_by(index,variable,scen,lat,lon) %>% 
+  group_by(index,variable,scen,ssp,lat,lon) %>% 
   mutate(ratio = (lag(mean_variable)-mean_variable)/mean_variable) %>%
   # mutate(ratio = mean_variable/lag(mean_variable)) %>% 
   filter(!is.na(ratio)) %>% 
@@ -269,13 +291,17 @@ dbem_runs %>%
     )#,
     # bins = 5
   ) +
-  facet_wrap(~variable + scen) +
-  scale_fill_gradient2()
+  facet_grid(ssp+variable ~ scen) +
+  scale_fill_gradient2() +
+  MyFunctions::my_land_map() +
+  geom_sf(data = ammb_sf, aes(), fill = "transparent") +
+  coord_sf(
+    xlim = c(-93,-83),
+    ylim = c(0,10)
+  )
   
-         
-  
-  
-  
+        
+  ggsave(filename = "../results/per_change.png",plot = last_plot())
   
   
 ```
