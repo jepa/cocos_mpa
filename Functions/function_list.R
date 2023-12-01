@@ -12,53 +12,73 @@ load_pkg <- function(pkg_list){
 
 # Read data and group them
 
+# scenario = "C6GFDL26F1MPAS2"
+
 load_dbem <- function(scenario, cat = "Catch"){
   
+  print(scenario)
   
   if(Sys.info()[8] == "jepa88"){
-  # List of modeled species
-  files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)
+    # List of modeled species
+    files_to_read <- list.files(MyFunctions::my_path("D","dbem/",scenario),pattern = cat)
   }else{
-  files_to_read <- list.files("SARAH PASTE YOUR ROOT PATH HERE",scenario,pattern = cat)
+    files_to_read <- list.files("SARAH PASTE YOUR ROOT PATH HERE",scenario,pattern = cat)
   }
   
   
   for(s in 1:length(files_to_read)){
-  # for(s in 1:5){
-
+  
+    # for(s in 1:5){
+    
     if(Sys.info()[8] == "jepa88"){
-            load(paste0("/Users/jepa88/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/data/dbem/",scenario,"/",files_to_read[s]))
+      
+      path_to_read <- paste0("/Users/jepa88/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/data/dbem/",scenario,"/",files_to_read[s])      
+      
+      if(files_to_read[s] != "600107Abd.RData"){
+        
+        load(path_to_read)
+        
+      }else{
+        
+        next()
+      }
     }else{
-
+      
       load(paste0('SARAH PASTE YOUR ROOT PATH HERE',scenario,"/",files_to_read[s]))
       
-      }
-  
-  
-  mpa_df <- as.data.frame(data)
-  colnames(mpa_df) <- seq(1951,2100,1)
-  rm(data)
-  
-  dbem_df <- mpa_df %>% 
-    rowid_to_column("index") %>% 
-    filter(index %in% scen_grid$index) %>% 
-    gather("year","value",`1951`:`2100`) %>% 
-    mutate(taxon_key = str_sub(files_to_read[s],1,6))
-  
-  
-  if(s == 1){
-    final_df <- dbem_df
-  }else{
-    final_df <- bind_rows(final_df,dbem_df)
-  }
-  
+    }
+    
+    
+    mpa_df <- as.data.frame(data)
+    
+    if(ncol(mpa_df) == 250){
+      colnames(mpa_df) <- seq(1851,2100,1)
+    }else{
+      colnames(mpa_df) <- seq(1951,2100,1)
+    }
+    rm(data)
+    
+    dbem_df <- mpa_df %>% 
+      rowid_to_column("index") %>% 
+      filter(index %in% scen_grid$index) %>% 
+      gather("year","value",`1951`:`2100`) %>% 
+      mutate(taxon_key = str_sub(files_to_read[s],1,6)) %>% 
+      select(index,taxon_key,year,value)
+    
+    
+    if(s == 1){
+      final_df <- dbem_df
+    }else{
+      final_df <- bind_rows(final_df,dbem_df)
+    }
+    
   }
   
   final_df <- final_df %>% 
     mutate(scen = str_sub(scenario,14,15),
            esm = str_sub(scenario,3,6),
            ssp = str_sub(scenario,7,8)
-           )
+    )
   
   return(final_df)
   
