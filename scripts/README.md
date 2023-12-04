@@ -1,10 +1,104 @@
 # DBEM runs
 
+## Runs for MPIS 2.6
+
+### Scenario 3
+*Date: 01/12/2023*
+*Job: 19651289* - 
+
+ SppNo           43
+ CCSc C6MPI26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6MPIS26F1MPAS3
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_3
+
+### Scenario 2
+*Date: 01/12/2023*
+*Job: 19650592* - 
+
+ SppNo           43
+ CCSc C6MPI26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6MPIS26F1MPAS2
+ tpath TaxonDataC0
+ ifile 11
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
+### Scenario 1
+*Date: 01/12/2023*
+*Job: 19650129* - 
+
+ SppNo           43
+ CCSc C6MPI26
+ SSP SSP126
+ rsfile RunSppCocos
+ rpath C6MPIS26F1MPAS1
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_1
+
+## Runs for MPIS 5.5
+### Scenario 3
+*Date: 01/12/2023*
+*Job: 19649672* - 
+
+ SppNo           43
+ CCSc C6MPI85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6MPIS85F1MPAS3
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_3
+
+### Scenario 2
+*Date: 01/12/2023*
+*Job: 19648830* - 
+
+SppNo           43
+ CCSc C6MPI85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6MPIS85F1MPAS2
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
+### Scenario 1
+
+*Date: 01/12/2023*
+*Job: 19648198* - 
+
+ SppNo           43
+ CCSc C6MPI85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6MPIS85F1MPAS1
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_1
+
 ## Runs for IPSL 2.6
 
 ### Scenario 3
 *Date: 26/11/2023*
-*Job: 19290901* - 
+*Job: 19290901* - Job Wall-clock time: 1-04:02:53
 
   SppNo           43
  CCSc C6IPSL26
