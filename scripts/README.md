@@ -18,8 +18,9 @@
  MPApath cocos_3
 
 ### Scenario 2
+
 *Date: 01/12/2023*
-*Job: 19650592* - 
+*Job: 19650592* - SOMETHING WENT WROGN
 
  SppNo           43
  CCSc C6MPI26
@@ -50,7 +51,7 @@
 ## Runs for MPIS 5.5
 ### Scenario 3
 *Date: 01/12/2023*
-*Job: 19649672* - 
+*Job: 19649672* - All good
 
  SppNo           43
  CCSc C6MPI85
@@ -64,8 +65,23 @@
  MPApath cocos_3
 
 ### Scenario 2
+
+*Date: 06/12/2023*
+*Job: 19963069* - 
+
+ SppNo           43
+ CCSc C6MPI85
+ SSP SSP585
+ rsfile RunSppCocos
+ rpath C6MPIS85F1MPAS2
+ tpath TaxonDataC0
+ ifile 10
+ FHS    1.00
+ FEEZ    1.00
+ MPApath cocos_2
+
 *Date: 01/12/2023*
-*Job: 19648830* - 
+*Job: 19648830* - Failed
 
 SppNo           43
  CCSc C6MPI85
