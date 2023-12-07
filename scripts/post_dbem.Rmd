@@ -29,15 +29,30 @@ select <- dplyr::select
 
 ```{r average_esm, eval = F, echo = F}
 
+# Scenario grids
+scen_grid <- 
+  bind_rows(
+  read.csv("../data/scenario1.csv") %>% mutate(scen = "S1"),
+  read.csv("../data/scenario2.csv") %>%  mutate(scen = "S2"),
+  read.csv("../data/scenario3.csv") %>% mutate(scen = "S3")
+  ) %>% 
+  select(index = Seq, scen, Lat,Lon,prop,status) %>% 
+  clean_names()# %>% 
+  # For now until we fix the IDs
 
-# Load DBEM runs
 
-# dbem_runs <- load_dbem("C6GFDL85F1MPAS1", cat = "Abd")
+# Get model list
 model_list <- c(
-  "C6GFDL85F1MPAS1","C6GFDL85F1MPAS2","C6GFDL85F1MPAS3", # GFDL 85
-  "C6GFDL26F1MPAS1","C6GFDL26F1MPAS2","C6GFDL26F1MPAS3", # GFDL 26
-  "C6IPSL85F1MPAS1","C6IPSL85F1MPAS2","C6IPSL85F1MPAS3", # IPSL 85
-  "C6IPSL26F1MPAS1","C6IPSL26F1MPAS2","C6IPSL26F1MPAS3", # IPSL 26
+  # "C6GFDL85F1MPAS1","C6GFDL85F1MPAS2","C6GFDL85F1MPAS3", # GFDL 85
+  # "C6GFDL26F1MPAS1","C6GFDL26F1MPAS2","C6GFDL26F1MPAS3", # GFDL 26
+  # "C6IPSL85F1MPAS1","C6IPSL85F1MPAS2","C6IPSL85F1MPAS3", # IPSL 85
+  # "C6IPSL26F1MPAS1","C6IPSL26F1MPAS2","C6IPSL26F1MPAS3", # IPSL 26
+  # "C6MPIS85F1MPAS1",
+  # "C6MPIS85F1MPAS2",
+  # "C6MPIS85F1MPAS3", # MPIS 85
+  "C6MPIS26F1MPAS1",
+  "C6MPIS26F1MPAS2",
+  # "C6MPIS26F1MPAS3", # MPIS 26
   NULL
   ) 
 
