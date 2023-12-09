@@ -30,7 +30,9 @@ Scenario 3: C6MPIS26TUS3 20034476 Done
 Run: MPIS85
 Scenario 1: C6MPIS85TUS1 20034980 Done
 Scenario 2: C6MPIS85TUS2 20036786 # Needs to be re-run completely 
-Scenario 3: C6MPIS85TUS3 20037007 # Needs to be re-run completely 
+  - Second run: 20115655 
+Scenario 3: C6MPIS85TUS3 20037007 # Needs to be re-run completely (Timed out)
+  - Second run: 20115686
 
 Converting from `.txt. to `.Rdata`
 Run: 20072356 Done
