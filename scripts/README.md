@@ -1,5 +1,41 @@
 # DBEM runs
 
+## Tuna runs
+
+Run: GFDL26
+Scenario 1: C6GFDL26TUS1 20021034 Done
+Scenario 2: C6GFDL26TUS2 20021406 Done
+Scenario 3: C6GFDL26TUS3 20021626 Done
+
+Run: GFDL85
+Scenario 1: C6GFDL85TUS1 20021900 Done
+Scenario 2: C6GFDL85TUS2 20022047 Done
+Scenario 3: C6GFDL85TUS3 20022469 Done
+
+Run: IPSL26 (compare with GFDL85 to male sure it was well ran)
+Scenario 1: C6IPSL26TUS1 20022691 Done
+Scenario 2: C6IPSL26TUS2 20022793 Done
+Scenario 3: C6IPSL26TUS3 20023464 Done
+
+Run: IPSL85
+Scenario 1: C6IPSL85TUS1 20026851 Done
+Scenario 2: C6IPSL85TUS2 20026986 Done
+Scenario 3: C6IPSL85TUS3 20027147 Done
+
+Run: MPIS26
+Scenario 1: C6MPIS26TUS1 20032115 Done
+Scenario 2: C6MPIS26TUS2 20034221 Done
+Scenario 3: C6MPIS26TUS3 20034476 Done
+
+Run: MPIS85
+Scenario 1: C6MPIS85TUS1 20034980 Done
+Scenario 2: C6MPIS85TUS2 20036786 # Needs to be re-run completely 
+Scenario 3: C6MPIS85TUS3 20037007 # Needs to be re-run completely 
+
+Converting from `.txt. to `.Rdata`
+Run: 20072356 Done
+
+
 ## Runs for MPIS 2.6
 
 ### Scenario 3
