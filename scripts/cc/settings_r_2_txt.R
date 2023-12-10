@@ -4,7 +4,7 @@
 
 library(parallel)
   
-  scenarios <- c("C6MPIS85TUS4","C6MPIS85TUS5")
+  scenarios <- c("C6MPIS85TUS2","C6MPIS85TUS3")
   category <- c("Abd","Catch")
   spplist <- read.table("~/projects/rrg-wailung/jepa/cocos_mpa/data/RunSppListCoco1.txt")
   #spplist <- c(690284)
