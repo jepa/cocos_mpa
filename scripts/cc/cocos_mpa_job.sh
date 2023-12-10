@@ -20,4 +20,4 @@ module purge
 module load gcc/9.3.0 r/4.0.2
 export R_LIBS=~/local/R_libs/
 
-Rscript scripts/cc/settings_r_t_txt.R settings_r_t_txt.R$SLURM_ARRAY_TASK_ID
+Rscript scripts/cc/settings_r_2_txt.R scripts/cc/slurm/settings_r_2_txt.R$SLURM_ARRAY_TASK_ID
