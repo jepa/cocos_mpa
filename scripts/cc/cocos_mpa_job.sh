@@ -8,7 +8,7 @@
 #SBATCH -t 00-04:00:00                                                          
 #SBATCH --mail-user=j.palacios@oceans.ubc.ca                                    
 #SBATCH --mail-type=ALL                                                         
-
+#SBATCH -o ./scripts/cc/output.%a.out
 
 # ---------------------------------------------------------------------         
 echo "Current working directory: `pwd`"
@@ -20,4 +20,4 @@ module purge
 module load gcc/9.3.0 r/4.0.2
 export R_LIBS=~/local/R_libs/
 
-Rscript scripts/cc/settings_r_2_txt.R scripts/cc/slurm/settings_r_2_txt.R$SLURM_ARRAY_TASK_ID
+Rscript scripts/cc/settings_r_2_txt.R settings_r_2_txt.R$SLURM_ARRAY_TASK_ID

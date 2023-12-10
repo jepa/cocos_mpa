@@ -28,7 +28,7 @@ source("/home/jepa/projects/rrg-wailung/jepa/R/Scripts/dbem_txt_to_rdata.R")
   ncores = Sys.getenv("SLURM_CPUS_PER_TASK")
   
   for(scen in 1: length(scenarios)){
-    mclapply(spplist, dbem_txt_to_rdata, scenario = scenarios[scen], output_path = out_path, mc.cores = ncores)
+    mclapply(spplist$V1, dbem_txt_to_rdata, scenario = scenarios[scen], output_path = out_path, mc.cores = ncores)
   }
   
 
