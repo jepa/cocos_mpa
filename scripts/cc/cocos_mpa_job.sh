@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --cpus-per-task=1        # number of processes                          
 #SBATCH --mem=4G                                                                
-#SBATCH -t 00-04:00:00                                                          
+#SBATCH -t 00-01:00:00                                                          
 #SBATCH --mail-user=j.palacios@oceans.ubc.ca                                    
 #SBATCH --mail-type=ALL                                                         
 #SBATCH -o ./scripts/cc/output.%a.out

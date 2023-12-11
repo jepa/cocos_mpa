@@ -4,12 +4,15 @@
 
 library(parallel)
   
-  scenarios <- c("C6MPIS85F1MPAS2","C6MPIS85F1MPAS3") 
+  scenarios <- c("C6MPIS26MIS3") 
   category <- c("Abd","Catch")
-  spplist <- read.table("~/projects/rrg-wailung/jepa/cocos_mpa/data/RunSppListCoco1.txt")
-  #spplist <- c(690284)
+  
+  spplist <- read.table("~/projects/rrg-wailung/jepa/cocos_mpa/data/RunSppListCoco1.txt") %>% 
+    filter(V1 %in% c("600006"))
+
   stryr <- 1951
   endyr <- 2100
+  
   out_path <- "/home/jepa/scratch/Results/R/"
   
 # Call function
