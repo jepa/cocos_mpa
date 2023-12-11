@@ -33,12 +33,15 @@ Scenario 2: C6MPIS85TUS2 20036786 # Needs to be re-run completely
   - Second run: 20115655 
   - Third run: 20122261
 Scenario 3: C6MPIS85TUS3 20037007 # Needs to be re-run completely (Timed out)
-  - Second run: 20115686 - Faile, the weirdest error
+  - Second run: 20115686 - Failed, the weirdest error
   - Third run: 20122191
 
 Converting from `.txt. to `.Rdata`
 Run: 20072356 Done
 Run: 20176137 for last two scenarios
+
+
+Something went wrong with 600077Abd for C6MPIS26F1MPAS3 so will need to re-run DBEM for it
 
 
 ## Runs for MPIS 2.6
