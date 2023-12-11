@@ -8,7 +8,6 @@
 #SBATCH -t 00-01:00:00                                                          
 #SBATCH --mail-user=j.palacios@oceans.ubc.ca                                    
 #SBATCH --mail-type=ALL                                                         
-#SBATCH -o ./scripts/cc/output.%a.out
 
 # ---------------------------------------------------------------------         
 echo "Current working directory: `pwd`"
