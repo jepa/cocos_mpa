@@ -3,6 +3,7 @@
   # Juliano Palacios
 
 library(parallel)
+library(dplyr)
   
   scenarios <- c("C6MPIS26MIS3") 
   category <- c("Abd","Catch")
