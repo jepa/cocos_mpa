@@ -85,6 +85,32 @@ load_dbem <- function(scenario, cat = "Catch"){
 }
 
 
+## Aggregate runs
+
+agg_dbem_runs <- function(model_list, cat = "Catch",grid = scen_grid, path = "~/Library/CloudStorage/OneDrive-UBC/Data/dbem/results/"){
+
+df <- bind_rows(
+  lapply(model_list,
+         load_dbem, cat = cat)
+) %>% 
+  group_by(index,year,taxon_key,scen,ssp) %>% 
+  summarise(
+    sd_value = sd(value, na.rm = T),
+    mean_value = mean(value, na.rm = T),
+    n_species = length(unique(taxon_key))
+  ) %>% 
+  mutate(variable = "Catch") %>%
+  left_join(scen_grid,
+            by = c("index","scen")
+  ) %>% 
+  filter(!is.na(mean_value))
+
+file_name <- paste0(path,"dbem_agg_runs_",cat,".csv")
+
+write_csv(df,"dbem_runs_catch.csv")
+
+}
+
 # Check original distributions
 
 distribution_check <- function(spp, spp_data){
