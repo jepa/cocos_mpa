@@ -85,6 +85,18 @@ load_dbem <- function(scenario, cat = "Catch"){
 }
 
 
+# Function to compare files in two folders
+
+compare_folders <- function(folder1, folder2) {
+  files1 <- list.files(folder1)
+  files2 <- list.files(folder2)
+  
+  different_files <- setdiff(files1, files2)
+  
+  return(different_files)
+}
+
+
 ## Aggregate runs
 
 agg_dbem_runs <- function(model_list, cat = "Catch",grid = scen_grid, path = "~/Library/CloudStorage/OneDrive-UBC/Data/dbem/results/"){
