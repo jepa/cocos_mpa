@@ -23,7 +23,58 @@ sf::sf_use_s2(use_s2 = FALSE)
 
 select <- dplyr::select
 
+
+if(Sys.info()[8] == "jepa88"){
+data_path <- "~/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/"
+}else{
+  data_path <- "SARAH PLACE YOUR ROOT PATH HERE"
+}
+
+
+# Global color pallets standardization
+
+# Status pallet
+status_pallet <- c("#00A08A", # Open
+                   "#046C9A", # Protected
+                   "#F98400" # Surrounding
+                   ) 
+
+# SSP pallet
+ssp_pallet <- c("#5BBCD6", #126
+                "#FF0000" #585x
+                )
+
+# Scenario pallet
+scenario_pallet <- c("#02401B", # S1
+                     "#FD6467", # S2
+                     "#B6854D" # S3
+                     )
+
 ```
+
+
+# Double check all species are there
+
+```{r double_check, eval = F, echp = F}
+# List of folders
+folders <- list.files(paste0(data_path,"/data/dbem")
+
+
+# Check for differences among all pairs of folders
+for (i in 1:(length(folders) - 1)) {
+  for (j in (i + 1):length(folders)) {
+    differing_files <- compare_folders(folders[i], folders[j])
+    
+    if (length(differing_files) > 0) {
+      cat("Files different between", folders[i], "and", folders[j], ":", differing_files, "\n")
+    } 
+  }
+}
+
+# All good!
+
+```
+
 
 # Average ESM data (NO RUN)
 
@@ -60,23 +111,23 @@ model_list <- c(
 
 lapply(c("Catch","Abd"), agg_dbem_runs, 
        model_list = model_list,
-       grid = scen_grid
+       grid = scen_grid,
+       path = paste0(data_path,"/dbem/results/")
        )
 
 ```
-
 
 # Load data
 
 ```{r}
 
 # Scenario sf
-ammb_sf <- st_read(MyFunctions::my_path("D","spatial/ammb","AMM_Bicentenario_CostaRica.shp")) %>% 
+ammb_sf <- st_read(paste0(data_path,"data/spatial/ammb/AMM_Bicentenario_CostaRica.shp")) %>% 
   st_transform(4326)
 
 st_crs(ammb_sf) <-4326
 
-coco_sf <- st_read(MyFunctions::my_path("D","spatial/coco","PN_IslaCoco_CostaRica.shp")) %>% 
+coco_sf <- st_read(paste0(data_path,"data/spatial/coco/PN_IslaCoco_CostaRica.shp")) %>% 
   st_transform(4326)
 st_crs(coco_sf) <-4326
 
@@ -91,6 +142,12 @@ scen_grid <-
   clean_names()# %>% 
   # For now until we fix the IDs
   # mutate(status = ifelse(status != "protected","unprotected",status))
+
+
+# Species list
+spp_list <-  readr::read_csv("../data/species/project_species_list.csv") %>% 
+  filter(!taxon_key %in% c(600218)) # remove taxa
+
 
 
 # Test labels
@@ -109,8 +166,8 @@ scen_grid <-
 #   scale_color_viridis_d()
 
 dbem_runs <- bind_rows(
-  read_csv("../data/dbem_runs_abd.csv"),
-  read_csv("../data/dbem_runs_catch.csv")
+  read_csv(paste0(data_path,"/results/dbem_runs_abd.csv")),
+  read_csv(paste0(data_path,"/results/dbem_runs_catch.csv"))
 )
 
 head(dbem_runs)
@@ -122,7 +179,7 @@ head(dbem_runs)
 ## Check runs
 
 ```{r}
-dbem_runs_c %>% 
+dbem_runs %>% 
   group_by(scen,ssp,variable) %>% 
   summarise(total_value = sum(mean_value, na.rm = T),
             mean_value = mean(mean_value, na.rm = T),
@@ -133,7 +190,7 @@ dbem_runs_c %>%
 
 
 
-# Preeliminary results
+# Aggregated results
 
 ## numbers exploration
 
@@ -315,3 +372,22 @@ dbem_runs %>%
   
 ```
 
+# Results per speices
+
+## Line trands of percentage change per scenario
+
+There are a few species such as Black skipjack and Longfin mako that do not havae a distinction between scenarios. This is mostly because the distribution of these species falls quite far from the MPA and thus, the effects of the polygons do not affect their distributions (see maps below).
+
+```{r}
+
+lapply(spp_list$taxon_key[1], spp_trend_scen_fig, data = dbem_runs, data_path = data_path)
+
+```
+
+## Line trands of percentage change per status
+
+```{r}
+
+lapply(spp_list$taxon_key[1], spp_trend_status_fig, data = dbem_runs, data_path = data_path)
+
+```
