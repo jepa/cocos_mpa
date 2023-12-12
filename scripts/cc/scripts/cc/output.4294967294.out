@@ -1,0 +1,17 @@
+Current working directory: /home/jepa/projects/rrg-wailung/jepa/cocos_mpa/scripts/cc
+Starting run at: Mon Dec 11 14:12:39 PST 2023
+/localscratch/spool/slurmd/job20221376/slurm_script: line 18: cd: /home/jepa//cocos_mpa_job: No such file or directory
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) CCconfig         4) imkl/2020.1.217    7) libfabric/1.10.1
+  2) gentoo/2020      5) intel/2020.1.217   8) openmpi/4.0.3
+  3) gcccore/.9.3.0   6) ucx/1.8.0          9) StdEnv/2020
+
+Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) openmpi/4.0.3
+
+Fatal error: cannot open file 'scripts/cc/settings_r_2_txt.R': No such file or directory
