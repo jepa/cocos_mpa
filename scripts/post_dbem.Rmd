@@ -32,9 +32,9 @@ select <- dplyr::select
 # Scenario grids
 scen_grid <- 
   bind_rows(
-  read.csv("../data/mpa_scenario/scenario1.csv") %>% mutate(scen = "S1"),
-  read.csv("../data/mpa_scenario/scenario2.csv") %>%  mutate(scen = "S2"),
-  read.csv("../data/mpa_scenario/scenario3.csv") %>% mutate(scen = "S3")
+  read.csv("../data/mpa_scenarios/scenario1.csv") %>% mutate(scen = "S1"),
+  read.csv("../data/mpa_scenarios/scenario2.csv") %>%  mutate(scen = "S2"),
+  read.csv("../data/mpa_scenarios/scenario3.csv") %>% mutate(scen = "S3")
   ) %>% 
   select(index = Seq, scen, Lat,Lon,prop,status) %>% 
   clean_names()# %>% 
@@ -57,40 +57,11 @@ model_list <- c(
   ) 
 
 # Catch (average by ESMs)
-dbem_runs_c <- bind_rows(
-  lapply(model_list,
-         load_dbem, cat = "Catch")
-) %>% 
-  group_by(index,year,taxon_key,scen,ssp) %>% 
-  summarise(
-        sd_value = sd(value, na.rm = T),
-        mean_value = mean(value, na.rm = T)
-  ) %>% 
-  mutate(variable = "Catch") %>%
-  left_join(scen_grid,
-            by = c("index","scen")
-            ) %>% 
-  filter(!is.na(mean_value))
 
-write_csv(dbem_runs_c,"~/Library/CloudStorage/OneDrive-UBC/Data/dbem/results/dbem_runs_catch.csv")
-
-# Abundance
-dbem_runs_a <- bind_rows(
-  lapply(model_list,
-         load_dbem, cat = "Abd")
-) %>% 
-  group_by(index,year,taxon_key,scen,ssp) %>% 
-  summarise(
-        sd_value = sd(value, na.rm = T),
-        mean_value = mean(value, na.rm = T)
-  ) %>% 
-  mutate(variable = "Abd") %>%
-  left_join(scen_grid,
-            by = c("index","scen")
-            ) %>% 
-  filter(!is.na(mean_value))
-
-write_csv(dbem_runs_a,"~/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/results/dbem_runs_abd.csv")
+lapply(c("Catch","Abd"), agg_dbem_runs, 
+       model_list = model_list,
+       grid = scen_grid
+       )
 
 ```
 
@@ -112,9 +83,9 @@ st_crs(coco_sf) <-4326
 # Scenario grids
 scen_grid <- 
   bind_rows(
-  read.csv("../data/scenario1.csv") %>% mutate(scen = "S1"),
-  read.csv("../data/scenario2.csv") %>%  mutate(scen = "S2"),
-  read.csv("../data/scenario3.csv") %>% mutate(scen = "S3")
+  read.csv("../data/mpa_scenarios/scenario1.csv") %>% mutate(scen = "S1"),
+  read.csv("../data/mpa_scenarios/scenario2.csv") %>%  mutate(scen = "S2"),
+  read.csv("../data/mpa_scenarios/scenario3.csv") %>% mutate(scen = "S3")
   ) %>% 
   select(index = Seq, scen, Lat,Lon,prop,status) %>% 
   clean_names()# %>% 
@@ -145,6 +116,19 @@ dbem_runs <- bind_rows(
 head(dbem_runs)
 
 
+```
+
+
+## Check runs
+
+```{r}
+dbem_runs_c %>% 
+  group_by(scen,ssp,variable) %>% 
+  summarise(total_value = sum(mean_value, na.rm = T),
+            mean_value = mean(mean_value, na.rm = T),
+            n_species = length(unique(taxon_key))
+            )
+            
 ```
 
 
@@ -200,9 +184,12 @@ dbem_runs %>%
   geom_sf(data = coco_sf, aes(), fill = "transparent", color = "black", size = 2) +
   theme(legend.position = "bottom")
 
-ggsave(filename = "../results/abd_catch_scen.png",plot = last_plot(), height = 14)
+ggsave(filename = "../results/abd_catch_scen.png",plot = last_plot(),
+       height = 10,
+       width = 10)
 
 ```
+
 ## Linear trend by year
 
 ```{r}
@@ -224,7 +211,9 @@ dbem_runs %>%
   facet_wrap(ssp+variable~status,
              scales = "free")
   
-ggsave(filename = "../results/catch_scen_lin.png",plot = last_plot())
+ggsave(filename = "../results/abd_catch_scen_lin.png", plot = last_plot(),
+       width = 14,
+       height = 10)
 
 ```
 
@@ -267,6 +256,11 @@ dbem_runs %>%
   facet_wrap(ssp+status~variable,
              scales = "free")
   
+
+ggsave(filename = "../results/abd_catch_scen_lin_weight.png", plot = last_plot(),
+       width = 14,
+       height = 10)
+
 
 ```
 
