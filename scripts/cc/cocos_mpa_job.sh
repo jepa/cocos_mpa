@@ -14,7 +14,7 @@ echo "Current working directory: `pwd`"
 echo "Starting run at: `date`"
 # ---------------------------------------------------------------------         
 
-cd ~/$projects/cocos_mpa_job
+cd ~/$projects/cocos_mpa
 module purge
 module load gcc/9.3.0 r/4.0.2
 export R_LIBS=~/local/R_libs/

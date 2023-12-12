@@ -9,7 +9,7 @@ library(dplyr)
   category <- c("Abd","Catch")
   
   spplist <- read.table("~/projects/rrg-wailung/jepa/cocos_mpa/data/RunSppListCoco1.txt") %>% 
-    filter(V1 %in% c("600006"))
+    filter(V1 %in% c("600077"))
 
   stryr <- 1951
   endyr <- 2100
