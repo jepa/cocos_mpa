@@ -1,6 +1,19 @@
 ### Per species functions
+# This script has the functions used to prepare the data and plot the different
+# figures per species presented in the report as supplemental material. The 
+# figures (and functions) included are:
 
-# Function to create line figure of biomass trend per species
+# spp_trend_scen_fig, creates line figure of biomass trend per species and sceario
+
+# spp_trend_status_fig, creates line figure of biomass trend per species and grid status
+
+# spp_map_scen_delta, creates map of biomass change per species and scenario
+
+# ggtheme_p, standarized theme for plots
+
+# ggtheme_pm, standarized theme for maps 
+
+# Function to create line figure of biomass trend per species and scenario
 
 spp_trend_scen_fig <- function(data,taxon,data_path){
   
@@ -133,10 +146,218 @@ spp_trend_status_fig <- function(data,taxon,data_path){
 }
 
 
+# Function to create box plot of biomass change per species and scenario
 
+spp_map_scen_delta <- function(data,taxon,data_path){
+  
+  # Global variables
+  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+  
+  # Verbantim
+  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+  
+  # Analysis
+  fig <-
+    data %>%
+    filter(taxon_key %in% taxon) %>%
+    group_by(taxon_key,year,variable,ssp,scen,index,lat,lon) %>% 
+    summarise(
+      total_value = sum(mean_value,na.rm = T),
+      .groups = "drop"
+    ) %>% 
+      mutate(
+        period = ifelse(year %in% seq(1995,2014,1),"history",
+                        ifelse(year %in% seq(2030,2049,1),"mid",NA))
+      ) %>% 
+      filter(!is.na(period)) %>% 
+    group_by(variable,scen,ssp,period,index,lat,lon) %>% 
+    summarise(
+      mean_variable = mean(total_value, na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    group_by(variable,scen,ssp,index,Latitude = lat,Longitude = lon) %>% 
+    mutate(
+      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
+      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
+      SSP = ifelse(ssp == 26,"126","585"),
+      Scenario = scen
+    ) %>% 
+    filter(period == "mid") %>% 
+    ggplot() +
+    geom_tile(
+      aes(
+        x = Longitude,
+        y = Latitude,
+        fill = relative_mean
+      )
+    ) +
+    facet_grid(scen ~ SSP + variable) +
+    scale_fill_gradient2("Relative Change (%)") +
+    MyFunctions::my_land_map() +
+    geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "black", size = 3) +
+    coord_sf(
+      xlim = c(-93,-83),
+      ylim = c(0,10)
+    ) +
+      ggtheme_m() 
+  
+  fig_name <- paste0(data_path,"results/figures/scenario_delta_map/",taxon_name %>% str_replace(" ", "_"),"_scen_delta.png")
+  
+  ggsave(filename = fig_name, 
+         plot = fig,
+         width = 12,
+         height = 12)
+}
 
+# Function to create box plot of biomass change per species and scenario
 
+spp_box_delta_scen <- function(data,taxon,data_path){
+  
+  # Global variables
+  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+  
+  # Verbantim
+  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+  
+  # Analysis
+  fig <-
+    data %>%
+    filter(taxon_key %in% taxon) %>%
+    group_by(taxon_key,year,variable,ssp,scen,index) %>% 
+    summarise(
+      total_value = sum(mean_value,na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    mutate(
+      period = ifelse(year %in% seq(1995,2014,1),"history",
+                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
+    ) %>% 
+    filter(!is.na(period)) %>% 
+    group_by(variable,scen,ssp,period,index) %>% 
+    summarise(
+      mean_variable = mean(total_value, na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    group_by(variable,scen,ssp,index) %>% 
+    mutate(
+      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
+      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
+      SSP = ifelse(ssp == 26,"126","585"),
+      Scenario = scen
+    ) %>% 
+      filter(period == "mid") %>% 
+    ggplot() +
+    geom_boxplot(
+      aes(
+        x = SSP,
+        y = relative_mean,
+        fill = Scenario
+      )
+    ) +
+    facet_wrap(~variable) +
+    scale_fill_manual(values = scenario_pallet) +
+    ggtheme_p(
+      leg_pos = "right"
+    ) 
+  
+  fig_name <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
+  
+  ggsave(filename = fig_name, 
+         plot = fig,
+         width = 8,
+         height = 8)
+}
+
+spp_box_delta_status <- function(data,taxon,data_path){
+  
+  # Global variables
+  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+  
+  # Verbantim
+  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+  
+  # Analysis
+  df <- 
+    data %>%
+    filter(taxon_key %in% taxon) %>%
+    group_by(taxon_key,year,variable,ssp,scen,status,index) %>% 
+    summarise(
+      total_value = sum(mean_value,na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    mutate(
+      period = ifelse(year %in% seq(1995,2014,1),"history",
+                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
+    ) %>% 
+    filter(!is.na(period)) %>% 
+    group_by(variable,scen,ssp,period,status,index) %>% 
+    summarise(
+      mean_variable = mean(total_value, na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    group_by(variable,scen,ssp,status,index) %>% 
+    mutate(
+      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
+      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
+      SSP = ifelse(ssp == 26,"126","585"),
+      Scenario = scen
+    ) %>% 
+    filter(period == "mid")
+      
+  
+  # Snceario + status
+  fig_a <-
+    df %>% 
+    ggplot() +
+    geom_boxplot(
+      aes(
+        x = SSP,
+        y = relative_mean,
+        fill = Scenario
+      )
+    ) +
+    facet_grid(status~variable) +
+    scale_fill_manual(values = scenario_pallet) +
+    ggtheme_p(
+      leg_pos = "right"
+    ) 
+  
+  fig_name <- paste0(data_path,"results/figures/scenario_status_delta_box/",taxon_name %>% str_replace(" ", "_"),"_status_scen_delta_box.png")
+  
+  ggsave(filename = fig_name, 
+         plot = fig_a,
+         width = 8,
+         height = 8)
+  
+  # Just scenario
+  fig_b <-
+    df %>% 
+    ggplot() +
+    geom_boxplot(
+      aes(
+        x = SSP,
+        y = relative_mean,
+        fill = Scenario
+      )
+    ) +
+    facet_grid(~variable) +
+    scale_fill_manual(values = scenario_pallet) +
+    ggtheme_p(
+      leg_pos = "right"
+    ) 
+  
+    fig_name <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
+    
+    ggsave(filename = fig_name, 
+           plot = fig_b,
+           width = 8,
+           height = 8)
+  
+}
+
+# ------------------------------------------------------ #
 # Themes
+# ------------------------------------------------------ #
 
 ggtheme_p <- function(ax_tx_s = 12,
                       axx_tx_ang = 0,
@@ -175,4 +396,49 @@ ggtheme_p <- function(ax_tx_s = 12,
   )
 }
 
+
+ggtheme_m <- function(ax_tx_s = 14,
+                      axx_tx_ang = 0,
+                      axy_tx_ang = 0,
+                      ax_tl_s = 15,
+                      leg_pos = "bottom",
+                      leg_aline = 0,
+                      leg_tl_s = 16,
+                      leg_tx_s = 14,
+                      leg_width = 1,
+                      hjust = 0, 
+                      facet_tl_s = 14){
+  
+  
+  theme(
+    # Background
+    panel.background = element_blank(),
+    strip.background = element_blank(),
+    panel.border   = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(colour = "white"),
+    # Axis
+    axis.line = element_line(color = "black"),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(size = ax_tx_s,
+                               angle = axx_tx_ang,
+                               hjust = hjust,
+                               face = "plain",
+                               color = "black"),
+    axis.text.y = element_text(size = ax_tx_s,
+                               color = "black"),
+    axis.title = element_text(size = ax_tl_s),
+    # Legend 
+    legend.key = element_rect(colour = NA, fill = NA),
+    legend.position = leg_pos,
+    legend.title.align = leg_aline,
+    legend.title = element_text(size = leg_tl_s),
+    legend.text = element_text(size = leg_tx_s),
+    legend.key.width = unit(2,"line"),
+    # For facets
+    strip.text = element_text(size = facet_tl_s, colour = "black"),
+    # strip.text.x = element_text(size = 11)
+  )
+  
+}
 

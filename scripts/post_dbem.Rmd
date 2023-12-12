@@ -146,7 +146,8 @@ scen_grid <-
 
 # Species list
 spp_list <-  readr::read_csv("../data/species/project_species_list.csv") %>% 
-  filter(!taxon_key %in% c(600218)) # remove taxa
+  filter(!taxon_key %in% c(600218)) %>%  # remove taxa
+  slice(1)
 
 
 
@@ -380,7 +381,7 @@ There are a few species such as Black skipjack and Longfin mako that do not hava
 
 ```{r}
 
-lapply(spp_list$taxon_key[1], spp_trend_scen_fig, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, spp_trend_scen_fig, data = dbem_runs, data_path = data_path)
 
 ```
 
@@ -388,6 +389,19 @@ lapply(spp_list$taxon_key[1], spp_trend_scen_fig, data = dbem_runs, data_path = 
 
 ```{r}
 
-lapply(spp_list$taxon_key[1], spp_trend_status_fig, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, spp_trend_status_fig, data = dbem_runs, data_path = data_path)
+
+```
+## Delta map
+
+```{r}
+lapply(spp_list$taxon_key, spp_map_scen_delta, data = dbem_runs, data_path = data_path)
+
+```
+## Delta box plots
+
+```{r}
+
+lapply(spp_list$taxon_key, spp_box_delta_status, data = dbem_runs, data_path = data_path)
 
 ```
