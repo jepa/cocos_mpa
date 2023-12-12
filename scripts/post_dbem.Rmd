@@ -6,7 +6,9 @@ output: html_document
 ---
 
 ```{r setup, include = F}
+
 source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
+source(here::here('./functions/figures_fx.R')) #Functions for creating figures
 
 load_pkg(c(
   # For grid estimation and species selection

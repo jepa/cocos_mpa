@@ -15,18 +15,34 @@
 
 # Function to create line figure of biomass trend per species and scenario
 
-spp_trend_scen_fig <- function(data,taxon,data_path){
+trend_scen_fig <- function(data,taxon = NA,data_path){
   
-  # Global variables
-  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
-  
-  # Verbantim
-  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
-  
+  if(!is.na(taxon)) {
+    # Global variables
+    taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+    # Figure name
+    fig_name <- paste0(data_path,"results/figures/scenario_trend/",taxon_name %>% str_replace(" ", "_"),"_scen_trend.png")
+    # Verbantim
+    print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+    
+    partial_df <- data %>%
+      filter(taxon_key %in% taxon)
+    
+  }else{
+    
+    # Verbantim
+    print("Creating plot for all taxa aggregated")
+    
+    # figure name
+    fig_name <- paste0("results/figures/scen_trend.png")
+    
+    partial_df <- data
+  }
+
   # Analysis
-  fig <- data %>%
-    filter(taxon_key %in% taxon) %>%
-    group_by(taxon_key,year,variable,ssp,scen) %>% 
+  
+  fig <- partial_df %>% 
+    group_by(year,variable,ssp,scen) %>% 
     summarise(
       total_value = sum(mean_value,na.rm = T),
       .groups = "drop"
@@ -49,7 +65,7 @@ spp_trend_scen_fig <- function(data,taxon,data_path){
       SSP = ifelse(ssp == 26,"126","585"),
       Scenario = scen
     ) %>% 
-      # View()
+    # View()
     ggplot() +
     geom_line(
       aes(
@@ -68,11 +84,10 @@ spp_trend_scen_fig <- function(data,taxon,data_path){
       leg_pos = "right"
     ) +
     scale_x_continuous(limits = c(2020,2100)) +
-      scale_color_manual(values = scenario_pallet)
+    scale_color_manual(values = scenario_pallet)
   
-  fig_name <- paste0(data_path,"results/figures/scenario_trend/",taxon_name %>% str_replace(" ", "_"),"_scen_trend.png")
-  
-  ggsave(filename = fig_name, 
+# Save figure
+  ggsave(filename = here(fig_name), 
          plot = fig,
          width = 10,
          height = 5)
@@ -81,19 +96,33 @@ spp_trend_scen_fig <- function(data,taxon,data_path){
 
 # Function to create line figure of biomass trend per species
 
-spp_trend_status_fig <- function(data,taxon,data_path){
+trend_status_fig <- function(data,taxon = NA,data_path){
   
-  # Global variables
-  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
-  
-  # Verbantim
-  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+  if(!is.na(taxon)) {
+    # Global variables
+    taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+    # Figure name
+    fig_name <- paste0(data_path,"results/figures/status_trend/",taxon_name %>% str_replace(" ", "_"),"_status_trend.png")
+    # Verbantim
+    print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+    
+    partial_df <- data %>%
+      filter(taxon_key %in% taxon)
+    
+  }else{
+    
+    # Verbantim
+    print("Creating plot for all taxa aggregated")
+    
+    # figure name
+    fig_name <- paste0("results/figures/status_trend.png")
+    
+    partial_df <- data
+  }
   
   # Analysis
-  fig <-
-    data %>%
-    filter(taxon_key %in% taxon) %>%
-    group_by(taxon_key,year,variable,ssp,scen,status) %>% 
+  fig <- partial_df %>%
+    group_by(year,variable,ssp,scen,status) %>% 
     summarise(
       total_value = sum(mean_value,na.rm = T),
       .groups = "drop"
@@ -117,7 +146,7 @@ spp_trend_status_fig <- function(data,taxon,data_path){
       Scenario = scen,
       Status = status
     ) %>% 
-  ggplot() +
+    ggplot() +
     geom_line(
       aes(
         x = year,
@@ -135,9 +164,8 @@ spp_trend_status_fig <- function(data,taxon,data_path){
       leg_pos = "right"
     ) +
     scale_x_continuous(limits = c(2020,2100)) +
-      scale_color_manual(values = status_pallet)
+    scale_color_manual(values = status_pallet)
   
-  fig_name <- paste0(data_path,"results/figures/status_trend/",taxon_name %>% str_replace(" ", "_"),"_status_trend.png")
   
   ggsave(filename = fig_name, 
          plot = fig,
@@ -148,28 +176,43 @@ spp_trend_status_fig <- function(data,taxon,data_path){
 
 # Function to create box plot of biomass change per species and scenario
 
-spp_map_scen_delta <- function(data,taxon,data_path){
+map_scen_delta <- function(data,taxon = NA,data_path){
   
-  # Global variables
-  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+  if(!is.na(taxon)) {
+    # Global variables
+    taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+    # Figure name
+    fig_name <- paste0(data_path,"results/figures/scenario_delta_map/",taxon_name %>% str_replace(" ", "_"),"_scen_delta.png")
+    # Verbantim
+    print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+    
+    partial_df <- data %>%
+      filter(taxon_key %in% taxon)
+    
+  }else{
+    
+    # Verbantim
+    print("Creating plot for all taxa aggregated")
+    
+    # figure name
+    fig_name <- paste0("results/figures/scenario_delta.png")
+    
+    partial_df <- data
+  }
   
-  # Verbantim
-  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
   
   # Analysis
-  fig <-
-    data %>%
-    filter(taxon_key %in% taxon) %>%
-    group_by(taxon_key,year,variable,ssp,scen,index,lat,lon) %>% 
+  fig <- partial_df %>%
+    group_by(year,variable,ssp,scen,index,lat,lon) %>% 
     summarise(
       total_value = sum(mean_value,na.rm = T),
       .groups = "drop"
     ) %>% 
-      mutate(
-        period = ifelse(year %in% seq(1995,2014,1),"history",
-                        ifelse(year %in% seq(2030,2049,1),"mid",NA))
-      ) %>% 
-      filter(!is.na(period)) %>% 
+    mutate(
+      period = ifelse(year %in% seq(1995,2014,1),"history",
+                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
+    ) %>% 
+    filter(!is.na(period)) %>% 
     group_by(variable,scen,ssp,period,index,lat,lon) %>% 
     summarise(
       mean_variable = mean(total_value, na.rm = T),
@@ -199,9 +242,7 @@ spp_map_scen_delta <- function(data,taxon,data_path){
       xlim = c(-93,-83),
       ylim = c(0,10)
     ) +
-      ggtheme_m() 
-  
-  fig_name <- paste0(data_path,"results/figures/scenario_delta_map/",taxon_name %>% str_replace(" ", "_"),"_scen_delta.png")
+    ggtheme_m() 
   
   ggsave(filename = fig_name, 
          plot = fig,
@@ -209,78 +250,37 @@ spp_map_scen_delta <- function(data,taxon,data_path){
          height = 12)
 }
 
-# Function to create box plot of biomass change per species and scenario
 
-spp_box_delta_scen <- function(data,taxon,data_path){
+box_delta_status <- function(data,taxon = NA,data_path){
   
-  # Global variables
-  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+  if(!is.na(taxon)) {
+    # Global variables
+    taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
+    # Figure names
+    fig_name_a <- paste0(data_path,"results/figures/scenario_status_delta_box/",taxon_name %>% str_replace(" ", "_"),"_status_scen_delta_box.png")
+    fig_name_b <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
+    # Verbantim
+    print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+    
+    partial_df <- data %>%
+      filter(taxon_key %in% taxon)
+    
+  }else{
+    
+    # Verbantim
+    print("Creating plot for all taxa aggregated")
+    
+    # figure name
+    fig_name_a <- paste0("results/figures/status_scen_delta_box.png")
+    fig_name_b <- paste0("results/figures/scenario_delta_box.png")
+    
+    partial_df <- data
+  }
   
-  # Verbantim
-  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
   
   # Analysis
-  fig <-
-    data %>%
-    filter(taxon_key %in% taxon) %>%
-    group_by(taxon_key,year,variable,ssp,scen,index) %>% 
-    summarise(
-      total_value = sum(mean_value,na.rm = T),
-      .groups = "drop"
-    ) %>% 
-    mutate(
-      period = ifelse(year %in% seq(1995,2014,1),"history",
-                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
-    ) %>% 
-    filter(!is.na(period)) %>% 
-    group_by(variable,scen,ssp,period,index) %>% 
-    summarise(
-      mean_variable = mean(total_value, na.rm = T),
-      .groups = "drop"
-    ) %>% 
-    group_by(variable,scen,ssp,index) %>% 
-    mutate(
-      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
-      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
-      SSP = ifelse(ssp == 26,"126","585"),
-      Scenario = scen
-    ) %>% 
-      filter(period == "mid") %>% 
-    ggplot() +
-    geom_boxplot(
-      aes(
-        x = SSP,
-        y = relative_mean,
-        fill = Scenario
-      )
-    ) +
-    facet_wrap(~variable) +
-    scale_fill_manual(values = scenario_pallet) +
-    ggtheme_p(
-      leg_pos = "right"
-    ) 
-  
-  fig_name <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
-  
-  ggsave(filename = fig_name, 
-         plot = fig,
-         width = 8,
-         height = 8)
-}
-
-spp_box_delta_status <- function(data,taxon,data_path){
-  
-  # Global variables
-  taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
-  
-  # Verbantim
-  print(paste("Creating plot for",taxon_name,"(",taxon,")"))
-  
-  # Analysis
-  df <- 
-    data %>%
-    filter(taxon_key %in% taxon) %>%
-    group_by(taxon_key,year,variable,ssp,scen,status,index) %>% 
+  df <- partial_df %>% 
+    group_by(year,variable,ssp,scen,status,index) %>% 
     summarise(
       total_value = sum(mean_value,na.rm = T),
       .groups = "drop"
@@ -303,7 +303,7 @@ spp_box_delta_status <- function(data,taxon,data_path){
       Scenario = scen
     ) %>% 
     filter(period == "mid")
-      
+  
   
   # Snceario + status
   fig_a <-
@@ -316,15 +316,16 @@ spp_box_delta_status <- function(data,taxon,data_path){
         fill = Scenario
       )
     ) +
-    facet_grid(status~variable) +
+    labs(y = "Relative change (%)") +
+    facet_grid(status~variable, scales = "free") +
     scale_fill_manual(values = scenario_pallet) +
     ggtheme_p(
       leg_pos = "right"
     ) 
   
-  fig_name <- paste0(data_path,"results/figures/scenario_status_delta_box/",taxon_name %>% str_replace(" ", "_"),"_status_scen_delta_box.png")
   
-  ggsave(filename = fig_name, 
+  
+  ggsave(filename = fig_name_a, 
          plot = fig_a,
          width = 8,
          height = 8)
@@ -340,18 +341,17 @@ spp_box_delta_status <- function(data,taxon,data_path){
         fill = Scenario
       )
     ) +
+    labs(y = "Relative change (%)") +
     facet_grid(~variable) +
     scale_fill_manual(values = scenario_pallet) +
     ggtheme_p(
       leg_pos = "right"
     ) 
   
-    fig_name <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
-    
-    ggsave(filename = fig_name, 
-           plot = fig_b,
-           width = 8,
-           height = 8)
+  ggsave(filename = fig_name_b, 
+         plot = fig_b,
+         width = 8,
+         height = 8)
   
 }
 
