@@ -189,9 +189,7 @@ dbem_runs %>%
             
 ```
 
-
-
-# Aggregated results
+# Results Aggregated for all species
 
 ## numbers exploration
 
@@ -212,7 +210,7 @@ dbem_runs %>%
 ```
 
 
-## Map results
+## Map of absolute results
 
 ```{r}
 
@@ -257,7 +255,7 @@ dbem_runs %>%
   summarise(
     total_value = sum(mean_value,na.rm = T)
   ) %>% 
-  # filter(scen == "S1") %>% 
+  
   ggplot() +
   geom_line(
     aes(
@@ -322,7 +320,7 @@ ggsave(filename = "../results/abd_catch_scen_lin_weight.png", plot = last_plot()
 
 ```
 
-# Per change
+## Per change
 
 
 ```{r}
@@ -381,7 +379,7 @@ There are a few species such as Black skipjack and Longfin mako that do not hava
 
 ```{r}
 
-lapply(spp_list$taxon_key, spp_trend_scen_fig, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, trend_scen_fig, data = dbem_runs, data_path = data_path)
 
 ```
 
@@ -389,19 +387,19 @@ lapply(spp_list$taxon_key, spp_trend_scen_fig, data = dbem_runs, data_path = dat
 
 ```{r}
 
-lapply(spp_list$taxon_key, spp_trend_status_fig, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, trend_status_fig, data = dbem_runs, data_path = data_path)
 
 ```
 ## Delta map
 
 ```{r}
-lapply(spp_list$taxon_key, spp_map_scen_delta, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, map_scen_delta, data = dbem_runs, data_path = data_path)
 
 ```
 ## Delta box plots
 
 ```{r}
 
-lapply(spp_list$taxon_key, spp_box_delta_status, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_path)
 
 ```
