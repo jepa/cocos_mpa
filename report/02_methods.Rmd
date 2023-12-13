@@ -1,0 +1,37 @@
+---
+output:
+  bookdown::pdf_document2:
+    toc : no
+    keep_tex: no
+    number_sections: yes
+---
+
+
+# Results
+
+In this project we set to understand the role of Cocos National Park (PNC) and the Marine Area Bicentenario (AMM) in the protection of highly migratory and commercially important fish species under climate change. We explore this under three different management scenarios. According to our results, aggregated fish biomass and MCP will both see an overall decline in the study area throughout the $21^{st}$ century, regardless of the climate change and management scenario. This suggests that MPAs alone do not have the capacity of counteract the negative effects of climate change in the region (Figure \@ref(fig:linetrend)). However, differences exist between scenarios. Our projections show that Scenario one will loose less biomass and MCP than other scenarios throughout the $21^{st}$ century. This suggests that the extra protection that this scenario provides (No fishing within cocos MPA) in combination with proper fisheries management (i.e., $F=F_{msy}$ in areas where fishing is allowed) provides a buffer against the negative impacts of climate change (Figure \@ref(fig:linetrend)). On the other hand, Scenario S3 that consists in the less protective of all (90% of cocos under no fishing) and higher level of over fishing (i.e., fishing outside the Cocos polygone is $F=F_{msy}*1.5$) is projected to have the largest loses due to climate change.
+
+
+```{r linetrend, eval = T, echo = T, fig.width = 4, fig.height = 4,fig.keep='high', echo=FALSE, fig.cap="Trend of change in biomass relative to the historical period color-coded by management scenario and SSP (linetype). Ten years tunning average."}
+
+# Call the image
+img <- readPNG("../results/figures/scen_trend.png")
+
+# Print the image
+grid.raster(img)
+```
+
+
+The difference between scenarios is substantial in terms of biomass by the mid of the $21^{st}$ century (Figure \@ref(fig:deltabox)). Here, Scenario S1 will loose significantly less biomass than scenarios S2 and S3 who present no significan difference between them. This pattern is the same for both SSPs as is to be expected since SSP trajectories do not vary much before 2050.
+
+
+
+```{r deltabox, eval = T, echo = T, fig.width = 4, fig.height = 4,fig.keep='high', echo=FALSE, fig.cap="Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis"}
+
+# Call the image
+img <- readPNG("./figures/study_area.png")
+
+# Print the image
+grid.raster(img)
+```
+

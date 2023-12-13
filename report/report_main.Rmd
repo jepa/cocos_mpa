@@ -1,0 +1,51 @@
+---
+title: "Report for project: Climate change and fisheries on the Parque Nacional de Cocos, Costa Rica"
+authors: "Juliano Palacios Abrantes and Sarah M. Roberts"
+date: "`r format(Sys.time(), '%B, %Y')`"
+output:
+  bookdown::pdf_book: # comment when rendering to word document
+  # bookdown::word_document2: # uncomment if rendering to word document
+    toc: no # change me to yes if rendering to Word
+    keep_tex: no
+    number_sections: yes
+    fig_width: 6
+    fig_height: 4
+    latex_engine: xelatex
+header-includes:
+   - \usepackage{ragged2e}
+   - \usepackage{setspace}
+   - \usepackage{tocloft}
+   - \usepackage{float} 
+   - \floatplacement{figure}{H} 
+   - \usepackage{wrapfig}
+   - \usepackage{pdfpages}
+   - \usepackage{caption} # allows setting caption width for tables
+---
+
+
+```{r setup, include=FALSE, eval = T}
+
+knitr::opts_chunk$set(echo = TRUE)
+options(knitr.duplicate.label = 'allow')
+
+
+# These libraries are only needed for examples in the introduction 
+library("png")
+library("grid")
+
+```
+
+# Summary
+
+In this project we set to understand the role of Cocos National Park (PNC) and the Marine Area Bicentenario (AMM) in the protection of highly migratory and commercialy important fish species.
+
+<!-- Methods -->
+
+```{r Methods, child = '01_methods.Rmd', eval = T}
+```
+
+
+<!-- Methods -->
+
+```{r Results, child = '01_methods.Rmd', eval = T}
+```
