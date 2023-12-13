@@ -31,7 +31,7 @@ trend_scen_fig <- function(data,taxon = NA,data_path){
   }else{
     
     # Verbantim
-    print("Creating plot for all taxa aggregated")
+    print("Creating plot for all taxa aggregated (scen_trend.png)")
     
     # figure name
     fig_name <- paste0("results/figures/scen_trend.png")
@@ -192,7 +192,7 @@ map_scen_delta <- function(data, taxon = NA, data_path){
   }else{
     
     # Verbantim
-    print("Creating plot for all taxa aggregated")
+    print("Creating plot for all taxa aggregated (scenario_delta_map.png)")
     
     # figure name
     fig_name <- here(paste0("results/figures/scenario_delta_map.png"))

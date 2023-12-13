@@ -119,6 +119,52 @@ lapply(c("Catch","Abd"), agg_dbem_runs,
 
 ```
 
+
+## Determine study area
+
+200km ~2 degrees 
+
+
+
+```{r study_area, eval = F}
+
+# Latitude in radians
+latitude_radians <- 10 * pi / 180
+
+# Longitude conversion factor
+conversion_factor <- 111 * cos(latitude_radians)
+
+# Change in Longitude
+change_in_longitude <- 200 / conversion_factor
+
+change_in_longitude # about 1.9 degeres rounded at 2
+
+
+
+scen_grid %>% 
+  # filter(lat <= 8.25,
+  #        lat >= 0,
+  #        lon >= -91.5,
+  #        lon <= -84
+  #        ) %>% 
+  filter(scen == "S1") %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = lon
+    )
+  ) +
+  geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "red", size = 2) +
+  MyFunctions::my_land_map() +
+  coord_sf(
+      xlim = c(-93,-83),
+      ylim = c(0,10)
+    )
+  
+```
+
 # Load data
 
 ```{r}
@@ -141,7 +187,12 @@ scen_grid <-
   read.csv("../data/mpa_scenarios/scenario3.csv") %>% mutate(scen = "S3")
   ) %>% 
   select(index = Seq, scen, Lat,Lon,prop,status) %>% 
-  clean_names()# %>% 
+  clean_names() %>% 
+  filter(lat <= 8.25,
+         lat >= 0,
+         lon >= -91.5,
+         lon <= -84
+         )
   # For now until we fix the IDs
   # mutate(status = ifelse(status != "protected","unprotected",status))
 
@@ -171,7 +222,8 @@ spp_list <-  readr::read_csv("../data/species/project_species_list.csv") %>%
 dbem_runs <- bind_rows(
   read_csv(paste0(data_path,"/results/dbem_runs_abd.csv")),
   read_csv(paste0(data_path,"/results/dbem_runs_catch.csv"))
-)
+) %>% 
+  filter(index %in% scen_grid$index)
 
 head(dbem_runs)
 
@@ -228,6 +280,7 @@ ggsave(filename = "../results/abd_catch_scen.png",plot = last_plot(),
        width = 10)
 
 ```
+
 
 # Results Aggregated for all species
 
