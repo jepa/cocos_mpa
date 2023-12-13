@@ -25,7 +25,14 @@ To reallocate fishing in the DBEM from protected grids to surrounding, we took t
 $$prop = 1 + \frac{1}{n_{surrounding}}$$
 where $n_{surrounding}$ ir the number of grid cells surrounding an MPA.
 
-Thus, for example, if status = protected, prop = 0 while if status = unprotected then prop = 1. Moreover, if there are 4 cells surrounding the a protected onecell, then prop = 1.25, if there are 2 surrounding cells then prop = 1.5,if there are 10 surrounding cells then prop = 1.1.
+Thus, for example, if status = protected, prop = 0 while if status = unprotected then prop = 1. Moreover, if there are 4 cells surrounding the a protected one cell, then prop = 1.25, if there are 2 surrounding cells then prop = 1.5,if there are 10 surrounding cells then prop = 1.1.
+
+Based on the computed prop, we re-estimated fishing mortality (*F*) (i.e., reallocate fishing effort) in the *surrounding* cells as:
+
+$$\hat{F}= F*prop$$
+
+where $\hat{F}$ is the fishing mortality adjusted for the ‘spill-over’ of fishing effort from the *protected* grid cell. If the cell is not protected nor surrounding a protected grid cell then $\hat{F}$ = *F*, that is, fishing mortality will not be adjusted for the no-take MPA effects. 
+
 
 ### Climate change impacts on MPAs
 
@@ -117,5 +124,11 @@ The current analysis explored the impacts of climate change on 42 species that o
 
 All of the data analysis and statistics were completed with the statistical software R version 4.3.1 (2023-06-16) and can be found at github.com/jepa/cocos_mpa. Data for this project can be downloaded from [this repository](link to data).
 
+
+## Caveats (Incoplete)
+
+- DBEM does not include species interactions, potential evolutionary adaptation, and is subjected to the original data from which the model distribution was made (Link to distribution plots).
+- Spatial scale 
+- Fishing effort is redistributed proportionally, in reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling excerisizes that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change. 
 
 

@@ -41,5 +41,22 @@ img <- readPNG("./figures/study_area.png")
 
 # Print the image
 grid.raster(img)
+
 ```
+
+
+We also looked at the projections based on the protection category of grid cell: *protected* for grid cells containing an MPA, *surrounding* for those immediately adjacent to a protected grid cell and *open* for the rest of grid cells (Figure \@ref(fig:deltabox)). For the *open* ocean, abundance on S1 is significantly less reduced than the other two scenarios, whereas for MCP this is only true under SSP 126 (Figure \@ref(fig:deltabox), *open*). Most *protected* grids will see a decrease in biomass with Scenario S1 presenting the less reduction in both SSPs (Figure \@ref(fig:deltabox), *protected*). Inversely, for MCP, the difference between scenarios is less clear. Finally, the spill over effect from *protected* grid cells becomes evident as the relative change in abundance of *surrounding* cells is substantially lower in Scenario S1 than the other scenarios (Figure \@ref(fig:deltabox), *surrounding*). This is likely supported by the fishing management status of the scenario S1 (i.e., $F = F_{msy}$) that allows for a sustainable harvest. For MCP this effect is only seen if emissions are mitigated (SSP 126) suggesting that fisheries could benefit from the spill over efeect of these protected areas. Under SSP 585, however, the effect is not different between scenarios as the effects of climate change are to strong for the management or cell status to be influential.
+
+
+```{r deltabox, eval = T, echo = T, fig.width = 4, fig.height = 4,fig.keep='high', echo=FALSE, fig.cap=""}
+
+# Call the image
+img <- readPNG("./figures/status_scen_delta_box.png")
+
+# Print the image
+grid.raster(img)
+
+```
+
+
 
