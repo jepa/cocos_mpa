@@ -21,12 +21,20 @@ img <- readPNG("../results/figures/scen_trend.png")
 grid.raster(img)
 ```
 
-
-The difference between scenarios is substantial in terms of biomass by the mid of the $21^{st}$ century (Figure \@ref(fig:deltabox)). Here, Scenario S1 will loose significantly less biomass than scenarios S2 and S3 who present no significan difference between them. This pattern is the same for both SSPs as is to be expected since SSP trajectories do not vary much before 2050.
-
-
+The difference between scenarios is substantial in terms of biomass by the mid of the $21^{st}$ century (Figure \@ref(fig:deltabox)). Here, Scenario S1 will loose significantly less biomass than scenarios S2 and S3 who present no significant difference between them. This pattern is the same for both SSPs as is to be expected since SSP trajectories do not vary much before 2050. Interestingly, the reduced biomass loss does not translate to MCP as the scenarios are not significantly different to each other. 
 
 ```{r deltabox, eval = T, echo = T, fig.width = 4, fig.height = 4,fig.keep='high', echo=FALSE, fig.cap="Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis"}
+
+# Call the image
+img <- readPNG("./figures/study_area.png")
+
+# Print the image
+grid.raster(img)
+```
+
+Spatially speaking, by the $21^{st}$ century, Scenario S1 shows areas with positive changes in biomass (up to 5%) relative to historical time period (Figure \@ref(fig:deltamap)). Such regions are located around the north and south boundaries of the MPAs. There is no evident difference in the regions within the MPAs across scenarios except for the full protected grids within Cocos MPA ((Figure \@ref(fig:deltamap), Abundance). This pattern is likely due to a higher level of biomass at the beginning of the experiment for these regions that is not efectiveley protected by the MPA under climate change, hence it sees a larger reduction. 
+
+```{r deltamap, eval = T, echo = T, fig.width = 4, fig.height = 4,fig.keep='high', echo=FALSE, fig.cap="Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis"}
 
 # Call the image
 img <- readPNG("./figures/study_area.png")
