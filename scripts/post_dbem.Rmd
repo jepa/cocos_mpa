@@ -152,16 +152,31 @@ scen_grid %>%
   geom_tile(
     aes(
       x = lon,
-      y = lat,
-      fill = lon
-    )
+      y = lat
+    ),
+    fill = "lightblue",
+    color = "lightblue"
   ) +
   geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "red", size = 2) +
+  geom_sf(data = coco_sf, aes(), fill = "transparent", color = "blue", size = 2) +
   MyFunctions::my_land_map() +
+  labs(
+    x = "Longitude",
+    y = "Latitude"
+  ) +
   coord_sf(
       xlim = c(-93,-83),
       ylim = c(0,10)
-    )
+    ) +
+  ggtheme_m(
+    leg_pos = ""
+  )
+
+ggsave("../report/figures/study_area.png",
+       plot = last_plot(),
+       width = 7,
+       height = 7
+       )
   
 ```
 
