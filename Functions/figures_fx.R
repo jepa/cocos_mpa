@@ -115,7 +115,7 @@ trend_status_fig <- function(data,taxon = NA,data_path){
     print("Creating plot for all taxa aggregated")
     
     # figure name
-    fig_name <- paste0("results/figures/status_trend.png")
+    fig_name <- here(paste0("results/figures/status_trend.png"))
     
     partial_df <- data
   }
@@ -176,7 +176,7 @@ trend_status_fig <- function(data,taxon = NA,data_path){
 
 # Function to create box plot of biomass change per species and scenario
 
-map_scen_delta <- function(data,taxon = NA,data_path){
+map_scen_delta <- function(data, taxon = NA, data_path){
   
   if(!is.na(taxon)) {
     # Global variables
@@ -184,7 +184,7 @@ map_scen_delta <- function(data,taxon = NA,data_path){
     # Figure name
     fig_name <- paste0(data_path,"results/figures/scenario_delta_map/",taxon_name %>% str_replace(" ", "_"),"_scen_delta.png")
     # Verbantim
-    print(paste("Creating plot for",taxon_name,"(",taxon,")"))
+    print(paste("Creating delta map for",taxon_name,"(",taxon,")"))
     
     partial_df <- data %>%
       filter(taxon_key %in% taxon)
@@ -195,7 +195,7 @@ map_scen_delta <- function(data,taxon = NA,data_path){
     print("Creating plot for all taxa aggregated")
     
     # figure name
-    fig_name <- paste0("results/figures/scenario_delta.png")
+    fig_name <- here(paste0("results/figures/scenario_delta_map.png"))
     
     partial_df <- data
   }
