@@ -31,7 +31,7 @@ Thus, for example, if status = protected, prop = 0 while if status = unprotected
 
 To explore the impacts of climate change in the MPAs, we evaluated the percentage change in biomass and MCP in each grid cell ($ΔB_i$) between two time periods representing the present time ($B_p$ - 1995–2014) and mid-21st century ($B_m$ 2030–2049) to reduce climate variability.
 
-$ΔB_i = \frac{B_p − B_m}{B_m}*100 $ 100where B x is the biomass at mid or end of the 21 st century and B y is the biomass at present time.
+$ΔB_i = \frac{B_p − B_m}{B_m}*100$ 100where B x is the biomass at mid or end of the 21 st century and B y is the biomass at present time.
 
 where *i* represents every grid cell in the study area. Note that for the aggregated results we sum the biomass of all species in each grid cell prior to estimate $ΔB_i$
 
