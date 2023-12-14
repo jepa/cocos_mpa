@@ -1,0 +1,383 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{ragged2e}
+\usepackage{setspace}
+\usepackage{tocloft}
+\usepackage{float}
+\floatplacement{figure}{H}
+\usepackage{wrapfig}
+\usepackage{pdfpages}
+\usepackage{caption}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Report for project: Climate change and fisheries on the Parque Nacional de Cocos, Costa Rica},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Report for project: Climate change and fisheries on the Parque Nacional de Cocos, Costa Rica}
+\author{}
+\date{\vspace{-2.5em}December, 2023}
+
+\begin{document}
+\maketitle
+
+\hypertarget{summary}{%
+\section{Summary}\label{summary}}
+
+In this project we set to understand the role of Cocos National Park (PNC) and the Marine Area Bicentenario (AMM) in the protection of highly migratory and commercialy important fish species.
+
+\hypertarget{methods}{%
+\section{Methods}\label{methods}}
+
+\hypertarget{projecting-species-distributions}{%
+\subsection{Projecting species distributions}\label{projecting-species-distributions}}
+
+We projected changes in biomass and potential catches of exploited species using a linked climate-fish-fisheries model called the dynamic bioclimate envelope model (DBEM). See Cheung \emph{et al }(2009, 2010, 2016) for in-depth descriptions of the model. In brief, the DBEM has a horizontal spatial resolution of 0.5 o latitude x 0.5 o longitude for the sea surface and bottom, and simulates annual average abundance and catches of each modelled species. The DBEM uses spatially explicit outputs from Earth System Models, including temperature, oxygen level, salinity, surface advection, sea ice extent and net primary production. Sea bottom and surface temperature, oxygen and salinity are used for demersal and pelagic species, respectively. These outputs are then used to calculate an index of habitat suitability for each species in each spatial cell. Other information used to calculate habitat suitability includes bathymetry and specific habitats (coral reef, continental shelf, shelf slope, and seamounts). Changes in carrying capacity in each cell is assumed to be a function of the estimated habitat suitability, and net primary production in each cell.
+
+The model simulates the net changes in abundance in each spatial cell based on logistic population growth, fishing mortality, and movement and dispersal of adults and larvae modelled through advection--diffusion--reaction equations. Biomass is calculated from abundance by using a characteristic weight representing the average mass of an individual in the cell. The model simulates how changes in temperature and oxygen content would affect the growth of the individual using a submodel derived from a generalized von Bertalanffy growth function.
+
+\hypertarget{rellocating-fishing-effort}{%
+\subsubsection{Rellocating fishing effort}\label{rellocating-fishing-effort}}
+
+Fishing intensity was assumed in the fisheries scenarios, represented by fishing mortality rates (\emph{F}) relative to the \emph{F} required to achieve maximum sustainable yield (i.e., \(F_{MSY}\)). As the model assumes logistic population growth, following the derivation from a simple surplus production model, FMSY is approximately equal to half of the intrinsic growth rate of each species.
+
+To reallocate fishing in the DBEM from protected grids to surrounding, we took the \emph{area protected} and divided by the \emph{total area} of each grid cell that contain any protection. We then reallocate that protected area proportion to the surrounding cells in form of fishing effort (\emph{F}):
+
+\[prop = 1 + \frac{area_{protected}/area_{total}}{n_{surrounding}}\]
+where \(n_{surrounding}\) is the number of grid cells surrounding an MPA.
+
+Thus, for example, if status = protected, prop = 0 while if status = unprotected then prop = 1. Moreover, if there are 4 cells surrounding the protected one cell, then prop = 1.25, if there are 2 surrounding cells then prop = 1.5,if there are 10 surrounding cells then prop = 1.1. If, for example, the protected cell is only partially covered by a protected area, say 50\%, and there are 4 surrounding cells, then prop = .5 for the protected cell, and prop = 1.125 (1 + .5/4) for the surrounding cells.
+
+Based on the computed prop, we re-estimated fishing mortality (\emph{F}) (i.e., reallocate fishing effort) in the \emph{surrounding} cells as:
+
+\[\hat{F}= F*prop\]
+
+where \(\hat{F}\) is the fishing mortality adjusted for the `spill-over' of fishing effort from the \emph{protected} grid cell. If the cell is not protected nor surrounding a protected grid cell then \(\hat{F}\) = \emph{F}, that is, fishing mortality will not be adjusted for the no-take MPA effects.
+
+\hypertarget{climate-change-impacts-on-mpas}{%
+\subsubsection{Climate change impacts on MPAs}\label{climate-change-impacts-on-mpas}}
+
+To explore the impacts of climate change in the MPAs, we evaluated the percentage change in biomass and MCP in each grid cell (\(ΔB_i\)) between two time periods representing the present time (\(B_p\) - 1995--2014) and mid-21st century (\(B_m\) 2030--2049) to reduce climate variability.
+
+\(ΔB_i = \frac{B_p − B_m}{B_m}*100\) 100where B x is the biomass at mid or end of the 21 st century and B y is the biomass at present time.
+
+where \emph{i} represents every grid cell in the study area. Note that for the aggregated results we sum the biomass of all species in each grid cell prior to estimate \(ΔB_i\)
+
+\hypertarget{climate-change-models-and-scenarios}{%
+\subsubsection{Climate change models and scenarios}\label{climate-change-models-and-scenarios}}
+
+The DBEM was forced with projections from three new-generation Earth system models (ESMs) from the Phase 6 of the Coupled Model Intercomparison Project (CMIP6). The ESMs included were the Geophysical Fluid Dynamics Laboratory (GFDL)-ESM4 (Dunne et al., 2020), the Institut Pierre-Simon Laplace (IPSL)-CM6A-LR (Boucher et al., 2020), and the Max Planck Institute Earth System Model (MPI)-ESM1.2 (Gutjahr et al., 2019). Climate change projections followed two contrasting scenarios according to the shared socio-economic pathways (SSPs) and Representative Concentration Pathways (RCPs): SSP1-RCP2.6 (SSP1-2.6) and SSP5-RCP8.5 (SSP5-2.6) scenarios (Gütschow et al., 2021; Meinshausen et al., 2020). The SSP1-2.6 and SSP5-8.5 scenarios assume ``strong mitigation'' and ``no mitigation'' with radiative forcing stabilized at 2.6 W/m² and 8.5 W/m², respectively, by the end of the 21st century.
+
+\hypertarget{study-area}{%
+\subsection{Study area}\label{study-area}}
+
+We gridded the area around the MPAs to a spatial resolution of \(0.5^o\) latitude x \(0.5^o\) longitude to match the DBEM resolution. We classified the grid cells into protected, surrounding, and open waters (i.e., not protected). Protected areas include cells that contain an MPA polygon (cells that fully or partially contain an MPA) while cells that were immediately adjacent to a reserve cell were classified as surrounding waters. All other ocean cells were considered unprotected (Figure \ref{fig:dbemgridFig}). We limit the study area (i.e., analysis area) to 200 km (\textasciitilde{} \(2^0\)) around the border of the MPAs.
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/dbemgridFig-1.pdf}
+\caption{\label{fig:dbemgridFig}Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis}
+\end{figure}
+
+\hypertarget{conservation-scenarios}{%
+\subsection{Conservation scenarios}\label{conservation-scenarios}}
+
+The current project considers three different scenarios which differ in the the amount and location available for fishing. The scenarios were build in collaboration with MarViva and range from a conservation inclined scenario (S1) to a more fisheries inclined scenario (S2). Below we detail each scenario:
+
+\hypertarget{scenario-s1-conservation-inclined}{%
+\subsubsection{Scenario S1 (Conservation inclined)}\label{scenario-s1-conservation-inclined}}
+
+\begin{itemize}
+\tightlist
+\item
+  PNC, 100\% protected
+\item
+  AMM, \emph{F} = \(\frac{1}{2}MSY\)
+\item
+  Everything else F = \(F_{MSY}\)
+\item
+  Reallocate fishing effort from PNC and AMM to the grid cells surrounding AMM
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/ScenOneFig-1.pdf}
+\caption{\label{fig:ScenOneFig}Scenario 1. Prop = proportion of area that is open to fishing.}
+\end{figure}
+
+\hypertarget{scenario-s2-fishing-inclined}{%
+\subsubsection{Scenario S2 (Fishing inclined):}\label{scenario-s2-fishing-inclined}}
+
+\begin{itemize}
+\tightlist
+\item
+  PNC, 100\% protected
+\item
+  AMM, \emph{F} = \(F_{MSY}\)
+\item
+  Everything else \emph{F} = \(F_{MSY}*1.5\)
+\item
+  Fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/ScenTwoFig-1.pdf}
+\caption{\label{fig:ScenTwoFig}Scenario 2. Prop = proportion of area that is open to fishing}
+\end{figure}
+
+\hypertarget{scenario-s3-iuu-inclined}{%
+\subsubsection{Scenario S3 (IUU inclined)}\label{scenario-s3-iuu-inclined}}
+
+\begin{itemize}
+\tightlist
+\item
+  PNC, 90\% protected (Allows for 10\% fishing as IUU)
+\item
+  AMM, \emph{F} = \(F_{MSY}*1.5\)
+\item
+  Everything else \emph{F} = \(F_{MSY}*1.5\)
+\item
+  fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/ScenThreeFig-1.pdf}
+\caption{\label{fig:ScenThreeFig}Scenario 3. Prop = proportion of area that is open to fishing}
+\end{figure}
+
+\hypertarget{species}{%
+\subsection{Species}\label{species}}
+
+The current analysis explored the impacts of climate change on 42 species that occur in the Eastern Tropical Pacific (\href{https://github.com/jepa/cocos_mpa/blob/main/data/species/project_species_list.csv}{See Species List on GitHub repository}.
+
+\hypertarget{code-and-data}{%
+\subsection{Code and Data}\label{code-and-data}}
+
+All of the data analysis and statistics were completed with the statistical software R version 4.3.1 (2023-06-16) and can be found at github.com/jepa/cocos\_mpa. Data for this project can be downloaded from \href{link\%20to\%20data}{this repository}.
+
+\hypertarget{caveats-incoplete}{%
+\subsection{Caveats (Incoplete)}\label{caveats-incoplete}}
+
+\begin{itemize}
+\tightlist
+\item
+  DBEM does not include species interactions, potential evolutionary adaptation, and is subjected to the original data from which the model distribution was made (Link to distribution plots).
+\item
+  Spatial scale
+\item
+  Fishing effort is redistributed proportionally, in reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling excerisizes that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change.
+\end{itemize}
+
+\hypertarget{methods-1}{%
+\section{Methods}\label{methods-1}}
+
+\hypertarget{projecting-species-distributions-1}{%
+\subsection{Projecting species distributions}\label{projecting-species-distributions-1}}
+
+We projected changes in biomass and potential catches of exploited species using a linked climate-fish-fisheries model called the dynamic bioclimate envelope model (DBEM). See Cheung \emph{et al }(2009, 2010, 2016) for in-depth descriptions of the model. In brief, the DBEM has a horizontal spatial resolution of 0.5 o latitude x 0.5 o longitude for the sea surface and bottom, and simulates annual average abundance and catches of each modelled species. The DBEM uses spatially explicit outputs from Earth System Models, including temperature, oxygen level, salinity, surface advection, sea ice extent and net primary production. Sea bottom and surface temperature, oxygen and salinity are used for demersal and pelagic species, respectively. These outputs are then used to calculate an index of habitat suitability for each species in each spatial cell. Other information used to calculate habitat suitability includes bathymetry and specific habitats (coral reef, continental shelf, shelf slope, and seamounts). Changes in carrying capacity in each cell is assumed to be a function of the estimated habitat suitability, and net primary production in each cell.
+
+The model simulates the net changes in abundance in each spatial cell based on logistic population growth, fishing mortality, and movement and dispersal of adults and larvae modelled through advection--diffusion--reaction equations. Biomass is calculated from abundance by using a characteristic weight representing the average mass of an individual in the cell. The model simulates how changes in temperature and oxygen content would affect the growth of the individual using a submodel derived from a generalized von Bertalanffy growth function.
+
+\hypertarget{rellocating-fishing-effort-1}{%
+\subsubsection{Rellocating fishing effort}\label{rellocating-fishing-effort-1}}
+
+Fishing intensity was assumed in the fisheries scenarios, represented by fishing mortality rates (\emph{F}) relative to the \emph{F} required to achieve maximum sustainable yield (i.e., \(F_{MSY}\)). As the model assumes logistic population growth, following the derivation from a simple surplus production model, FMSY is approximately equal to half of the intrinsic growth rate of each species.
+
+To reallocate fishing in the DBEM from protected grids to surrounding, we took the \emph{area protected} and divided by the \emph{total area} of each grid cell that contain any protection. We then reallocate that protected area proportion to the surrounding cells in form of fishing effort (\emph{F}):
+
+\[prop = 1 + \frac{area_{protected}/area_{total}}{n_{surrounding}}\]
+where \(n_{surrounding}\) is the number of grid cells surrounding an MPA.
+
+Thus, for example, if status = protected, prop = 0 while if status = unprotected then prop = 1. Moreover, if there are 4 cells surrounding the protected one cell, then prop = 1.25, if there are 2 surrounding cells then prop = 1.5,if there are 10 surrounding cells then prop = 1.1. If, for example, the protected cell is only partially covered by a protected area, say 50\%, and there are 4 surrounding cells, then prop = .5 for the protected cell, and prop = 1.125 (1 + .5/4) for the surrounding cells.
+
+Based on the computed prop, we re-estimated fishing mortality (\emph{F}) (i.e., reallocate fishing effort) in the \emph{surrounding} cells as:
+
+\[\hat{F}= F*prop\]
+
+where \(\hat{F}\) is the fishing mortality adjusted for the `spill-over' of fishing effort from the \emph{protected} grid cell. If the cell is not protected nor surrounding a protected grid cell then \(\hat{F}\) = \emph{F}, that is, fishing mortality will not be adjusted for the no-take MPA effects.
+
+\hypertarget{climate-change-impacts-on-mpas-1}{%
+\subsubsection{Climate change impacts on MPAs}\label{climate-change-impacts-on-mpas-1}}
+
+To explore the impacts of climate change in the MPAs, we evaluated the percentage change in biomass and MCP in each grid cell (\(ΔB_i\)) between two time periods representing the present time (\(B_p\) - 1995--2014) and mid-21st century (\(B_m\) 2030--2049) to reduce climate variability.
+
+\(ΔB_i = \frac{B_p − B_m}{B_m}*100\) 100where B x is the biomass at mid or end of the 21 st century and B y is the biomass at present time.
+
+where \emph{i} represents every grid cell in the study area. Note that for the aggregated results we sum the biomass of all species in each grid cell prior to estimate \(ΔB_i\)
+
+\hypertarget{climate-change-models-and-scenarios-1}{%
+\subsubsection{Climate change models and scenarios}\label{climate-change-models-and-scenarios-1}}
+
+The DBEM was forced with projections from three new-generation Earth system models (ESMs) from the Phase 6 of the Coupled Model Intercomparison Project (CMIP6). The ESMs included were the Geophysical Fluid Dynamics Laboratory (GFDL)-ESM4 (Dunne et al., 2020), the Institut Pierre-Simon Laplace (IPSL)-CM6A-LR (Boucher et al., 2020), and the Max Planck Institute Earth System Model (MPI)-ESM1.2 (Gutjahr et al., 2019). Climate change projections followed two contrasting scenarios according to the shared socio-economic pathways (SSPs) and Representative Concentration Pathways (RCPs): SSP1-RCP2.6 (SSP1-2.6) and SSP5-RCP8.5 (SSP5-2.6) scenarios (Gütschow et al., 2021; Meinshausen et al., 2020). The SSP1-2.6 and SSP5-8.5 scenarios assume ``strong mitigation'' and ``no mitigation'' with radiative forcing stabilized at 2.6 W/m² and 8.5 W/m², respectively, by the end of the 21st century.
+
+\hypertarget{study-area-1}{%
+\subsection{Study area}\label{study-area-1}}
+
+We gridded the area around the MPAs to a spatial resolution of \(0.5^o\) latitude x \(0.5^o\) longitude to match the DBEM resolution. We classified the grid cells into protected, surrounding, and open waters (i.e., not protected). Protected areas include cells that contain an MPA polygon (cells that fully or partially contain an MPA) while cells that were immediately adjacent to a reserve cell were classified as surrounding waters. All other ocean cells were considered unprotected (Figure \ref{fig:dbemgridFig}). We limit the study area (i.e., analysis area) to 200 km (\textasciitilde{} \(2^0\)) around the border of the MPAs.
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/dbemgridFig-9-1.pdf}
+\caption{\label{fig:dbemgridFig-9}Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis}
+\end{figure}
+
+\hypertarget{conservation-scenarios-1}{%
+\subsection{Conservation scenarios}\label{conservation-scenarios-1}}
+
+The current project considers three different scenarios which differ in the the amount and location available for fishing. The scenarios were build in collaboration with MarViva and range from a conservation inclined scenario (S1) to a more fisheries inclined scenario (S2). Below we detail each scenario:
+
+\hypertarget{scenario-s1-conservation-inclined-1}{%
+\subsubsection{Scenario S1 (Conservation inclined)}\label{scenario-s1-conservation-inclined-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  PNC, 100\% protected
+\item
+  AMM, \emph{F} = \(\frac{1}{2}MSY\)
+\item
+  Everything else F = \(F_{MSY}\)
+\item
+  Reallocate fishing effort from PNC and AMM to the grid cells surrounding AMM
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/ScenOneFig-10-1.pdf}
+\caption{\label{fig:ScenOneFig-10}Scenario 1. Prop = proportion of area that is open to fishing.}
+\end{figure}
+
+\hypertarget{scenario-s2-fishing-inclined-1}{%
+\subsubsection{Scenario S2 (Fishing inclined):}\label{scenario-s2-fishing-inclined-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  PNC, 100\% protected
+\item
+  AMM, \emph{F} = \(F_{MSY}\)
+\item
+  Everything else \emph{F} = \(F_{MSY}*1.5\)
+\item
+  Fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/ScenTwoFig-11-1.pdf}
+\caption{\label{fig:ScenTwoFig-11}Scenario 2. Prop = proportion of area that is open to fishing}
+\end{figure}
+
+\hypertarget{scenario-s3-iuu-inclined-1}{%
+\subsubsection{Scenario S3 (IUU inclined)}\label{scenario-s3-iuu-inclined-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  PNC, 90\% protected (Allows for 10\% fishing as IUU)
+\item
+  AMM, \emph{F} = \(F_{MSY}*1.5\)
+\item
+  Everything else \emph{F} = \(F_{MSY}*1.5\)
+\item
+  fishing from PNC gets reallocated to cells surrounding PNC (which are AMM cells)
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{report_main_files/figure-latex/ScenThreeFig-12-1.pdf}
+\caption{\label{fig:ScenThreeFig-12}Scenario 3. Prop = proportion of area that is open to fishing}
+\end{figure}
+
+\hypertarget{species-1}{%
+\subsection{Species}\label{species-1}}
+
+The current analysis explored the impacts of climate change on 42 species that occur in the Eastern Tropical Pacific (\href{https://github.com/jepa/cocos_mpa/blob/main/data/species/project_species_list.csv}{See Species List on GitHub repository}.
+
+\hypertarget{code-and-data-1}{%
+\subsection{Code and Data}\label{code-and-data-1}}
+
+All of the data analysis and statistics were completed with the statistical software R version 4.3.1 (2023-06-16) and can be found at github.com/jepa/cocos\_mpa. Data for this project can be downloaded from \href{link\%20to\%20data}{this repository}.
+
+\hypertarget{caveats-incoplete-1}{%
+\subsection{Caveats (Incoplete)}\label{caveats-incoplete-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  DBEM does not include species interactions, potential evolutionary adaptation, and is subjected to the original data from which the model distribution was made (Link to distribution plots).
+\item
+  Spatial scale
+\item
+  Fishing effort is redistributed proportionally, in reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling excerisizes that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change.
+\end{itemize}
+
+\end{document}

@@ -44,11 +44,11 @@ where *i* represents every grid cell in the study area. Note that for the aggreg
 
 ### Climate change models and scenarios
 
-The DBEM was forced with projections from three new-generation Earth system models (ESMs) from the Phase 6 of the Coupled Model Intercomparison Project (CMIP6). The ESMs included were the Geophysical Fluid Dynamics Laboratory (GFDL)-ESM4 (Dunne et al., 2020), the Institut Pierre-Simon Laplace (IPSL)-CM6A-LR (Boucher et al., 2020), and the Max Planck Institute Earth System Model (MPI)-ESM1.2 (Gutjahr et al., 2019). Climate change projections followed two contrasting scenarios according to the shared socio-economic pathways (SSPs) and Representative Concentration Pathways (RCPs): SSP1-RCP2.6 (SSP1-2.6) and SSP5-RCP8.5 (SSP5-2.6) scenarios (Gütschow et al., 2021; Meinshausen et al., 2020). The SSP1-2.6 and SSP5-8.5 scenarios assume “strong mitigation” and “no mitigation” with radiative forcing stabilized at 2.6 W/m² and 8.5 W/m², respectively, by the end of the 21st century.
+The DBEM was forced with projections from three new-generation Earth system models (ESMs) from Phase 6 of the Coupled Model Intercomparison Project (CMIP6). The ESMs included were the Geophysical Fluid Dynamics Laboratory (GFDL)-ESM4 (Dunne et al., 2020), the Institut Pierre-Simon Laplace (IPSL)-CM6A-LR (Boucher et al., 2020), and the Max Planck Institute Earth System Model (MPI)-ESM1.2 (Gutjahr et al., 2019). Climate change projections followed two contrasting scenarios according to the shared socio-economic pathways (SSPs) and Representative Concentration Pathways (RCPs): SSP1-RCP2.6 (SSP1-2.6) and SSP5-RCP8.5 (SSP5-2.6) scenarios (Gütschow et al., 2021; Meinshausen et al., 2020). The SSP1-2.6 and SSP5-8.5 scenarios assume “strong mitigation” and “no mitigation” with radiative forcing stabilized at 2.6 W/m² and 8.5 W/m², respectively, by the end of the 21st century.
 
 ## Study area
 
-We gridded the area around the MPAs to a spatial resolution of $0.5^o$ latitude x $0.5^o$ longitude to match the DBEM resolution. We classified the grid cells into protected, surrounding, and open waters (i.e., not protected). Protected areas include cells that contain an MPA polygon (cells that fully or partially contain an MPA) while cells that were immediately adjacent to a reserve cell were classified as surrounding waters. All other ocean cells were considered unprotected (Figure \@ref(fig:dbemgridFig)). We limit the study area (i.e., analysis area) to 200 km (~ $2^0$) around the border of the MPAs.
+We gridded the area around the MPAs to a spatial resolution of $0.5^o$ latitude x $0.5^o$ longitude to match the DBEM resolution. We classified the grid cells into protected, surrounding, and open waters (i.e., not protected). Protected areas include cells that contain an MPA polygon (cells that fully or partially contain an MPA) while cells that were immediately adjacent to an MPA cell were classified as surrounding waters. All other ocean cells were considered unprotected (Figure \@ref(fig:dbemgridFig)). We limit the study area (i.e., analysis area) to 200 km (~ $2^0$) around the border of the MPAs.
 
 
 
@@ -64,7 +64,7 @@ grid.raster(img)
 
 ## Conservation scenarios
 
-The current project considers three different scenarios which differ in the the amount and location available for fishing. The scenarios were build in collaboration with MarViva and range from a conservation inclined scenario (S1) to a more fisheries inclined scenario (S2). Below we detail each scenario:
+The current project considers three different scenarios which differ in the amount and location available for fishing. The scenarios were build in collaboration with MarViva and range from a conservation inclined scenario (S1) to a more fisheries inclined scenario (S2). Below we detail each scenario:
 
 ### Scenario S1 (Conservation inclined)
 
@@ -129,6 +129,6 @@ All of the data analysis and statistics were completed with the statistical soft
 
 - DBEM does not include species interactions, potential evolutionary adaptation, and is subjected to the original data from which the model distribution was made (Link to distribution plots).
 - Spatial scale 
-- Fishing effort is redistributed proportionally, in reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling excerisizes that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change. 
+- Fishing effort is redistributed proportionally, in reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling exercises that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change. 
 
 

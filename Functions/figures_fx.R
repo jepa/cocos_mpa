@@ -575,3 +575,43 @@ ggtheme_m <- function(ax_tx_s = 14,
   
 }
 
+
+ggtheme_m_sarah <- function(ax_tx_s = 14,
+                      axx_tx_ang = 0,
+                      axy_tx_ang = 0,
+                      ax_tl_s = 15,
+                      leg_pos = "right",
+                      leg_aline = 0,
+                      leg_tl_s = 16,
+                      leg_tx_s = 14,
+                      leg_width = 1,
+                      hjust = 0, 
+                      facet_tl_s = 14){
+  
+  
+  theme(
+    # Background
+    panel.background = element_blank(),
+    strip.background = element_blank(),
+    panel.border   = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(colour = "white"),
+    # Axis
+    axis.line = element_line(color = "black"),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(size = ax_tx_s,
+                               angle = axx_tx_ang,
+                               hjust = hjust,
+                               face = "plain",
+                               color = "black"),
+    axis.text.y = element_text(size = ax_tx_s,
+                               color = "black"),
+    axis.title = element_text(size = ax_tl_s),
+    # Legend 
+    # For facets
+    strip.text = element_text(size = facet_tl_s, colour = "black"),
+    # strip.text.x = element_text(size = 11)
+  )
+  
+}
+

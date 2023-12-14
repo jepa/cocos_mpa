@@ -24,6 +24,54 @@ select <- dplyr::select
 
 ```
 
+```{r setup, include = F}
+
+source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
+source(here::here('./functions/figures_fx.R')) #Functions for creating figures
+
+load_pkg(c(
+  # For grid estimation and species selection
+  "spatialEco","tidyverse", "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
+  # For collaborative ease
+  "here",
+  "readr",
+  "janitor"
+  ))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+
+if(Sys.info()[8] == "jepa88"){
+data_path <- "~/Library/CloudStorage/OneDrive-UBC/Data/cocos_mpa/"
+}else{
+  data_path <- "SARAH PLACE YOUR ROOT PATH HERE"
+}
+
+
+# Global color pallets standardization
+
+# Status pallet
+status_pallet <- c("#00A08A", # Open
+                   "#046C9A", # Protected
+                   "#F98400" # Surrounding
+                   ) 
+
+# SSP pallet
+ssp_pallet <- c("#5BBCD6", #126
+                "#FF0000" #585x
+                )
+
+# Scenario pallet
+scenario_pallet <- c("#02401B", # S1
+                     "#FD6467", # S2
+                     "#B6854D" # S3
+                     )
+
+```
 
 # 1 Load data and Intersect
 ##1.1 Load in the mpa data and check crs information
@@ -55,7 +103,7 @@ ggplot() + geom_sf(data = ammb, colour = "blue") + geom_sf(data = coco, colour =
 ## 1.2 Load in grid data
 ```{r}
 grid <- read_sf(here("./data/spatial/grid/worldsq_EA.shp"))
-grid <- grid %>% filter(Lat < 10 & Lat > 0 & Lon > -92 & Lon < -82)
+grid <- grid %>% filter(Lat < 8 & Lat > 0 & Lon > -92 & Lon < -84)
 
 grid <- st_transform(grid, crs = st_crs(crs)) %>% 
   filter(PWater > 0)
@@ -278,6 +326,23 @@ grid_sc1 <- grid_sc1 %>%  mutate(prop = if_else(surrounding_ammb %in% "surroundi
 ggplot() + geom_sf(data = subset(grid_sc1, grid_sc1$prop != 1), aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
 scale_color_manual(values = c("darkred", "blue"))
 
+sc1 <- ggplot() + geom_sf(data = grid_sc1, aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue")) + labs(
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  ggtheme_m_sarah(
+    leg_pos = ""
+  )
+
+sc1
+
+ggsave("../report/figures/scenario_one.png",
+       plot = last_plot(),
+       width = 7,
+       height = 7
+       )
+  
 ```
 
 ##2.2 Scenario 2
@@ -319,6 +384,24 @@ grid_sc2 <- grid_sc2 %>%  mutate(prop = if_else(status_ammb %in% "protected_ammb
 
 ggplot() + geom_sf(data = grid_sc2, aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
 scale_color_manual(values = c("darkred", "blue"))
+
+sc2 <- ggplot() + geom_sf(data = grid_sc2, aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue")) + labs(
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  ggtheme_m_sarah(
+    leg_pos = ""
+  )
+
+sc2
+
+ggsave("../report/figures/scenario_two.png",
+       plot = last_plot(),
+       width = 7,
+       height = 7
+       )
+  
 ```
 
 ##2.3 Scenario 3 
@@ -354,6 +437,24 @@ grid_sc3 <- grid_sc3 %>%  mutate(prop = if_else(surrounding_coco %in% "surroundi
 
 ggplot() + geom_sf(data = subset(grid_sc3, grid_sc3$prop !=1.5), aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
 scale_color_manual(values = c("darkred", "blue"))
+
+
+sc3 <- ggplot() + geom_sf(data = grid_sc3, aes(fill = prop)) + geom_sf(data = ammb, aes(colour = "ammb"), fill = NA) + geom_sf(data = coco, aes(colour = "coco"), fill = NA) +
+scale_color_manual(values = c("darkred", "blue")) + labs(
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  ggtheme_m_sarah(
+    leg_pos = ""
+  )
+
+sc3
+
+ggsave("../report/figures/scenario_three.png",
+       plot = last_plot(),
+       width = 7,
+       height = 7
+       )
 
 ```
 
