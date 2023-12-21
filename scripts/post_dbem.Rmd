@@ -228,7 +228,11 @@ spp_list <- dbem_runs %>%
   left_join(MyFunctions::my_data("sau_species")) %>% 
   select(-n,-genus,-species)
 
-write_csv(spp_list,"../data/species/project_species_list.csv")
+# write_csv(spp_list,"../data/species/project_species_list.csv")
+
+sau_commercial_groups <- my_path("G", extra_path = "SAU", name = "sau_spp_commercial_group.csv", read = T)
+
+
 
 ```
 
@@ -371,6 +375,168 @@ map_scen_delta(data = dbem_runs, data_path = data_path)
   
 ```
 
+
+# Results per functional group
+
+We will group species by functional groups (e.g., tunas, sharks, perch-likes, etc) according to SAU.
+
+```{r}
+
+commercial_results <- spp_list %>% 
+  left_join(sau_commercial_groups) %>% 
+  mutate(commercial_group = ifelse(is.na(commercial_group),"Perch-likes",commercial_group)) %>% # Updated with sau.org
+  left_join(dbem_runs) %>% 
+  group_by(commercial_group,index,lat,lon,year,scen,ssp,variable,status) %>% 
+  summarise(mean_value = sum(mean_value,na.rm = T)) # Total biomass per commercial group
+
+
+
+```
+
+## Liner trend
+
+```{r}
+
+ commercial_results %>% 
+    group_by(year,variable,ssp,scen,commercial_group) %>% 
+    summarise(
+      total_value = sum(mean_value,na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    mutate(
+      period = ifelse(year %in% seq(1995,2014,1),"history",year)
+    ) %>% 
+    filter(period %in% c("history",seq(2015,2100,1))) %>% 
+    group_by(variable,scen,ssp,period,commercial_group) %>% 
+    summarise(
+      mean_variable = mean(total_value, na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    group_by(variable,scen,ssp,commercial_group) %>% 
+    mutate(
+      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
+      running_mean = zoo::rollapply(relative_mean, width = 10, FUN = mean, align = "right", fill = NA),
+      year = ifelse(period == "history",2014,period) %>% as.numeric(.),
+      facet = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
+      SSP = ifelse(ssp == 26,"126","585"),
+      Scenario = scen,
+      running_mean = ifelse(running_mean > 100,100,running_mean)
+    ) %>% 
+    # View()
+    ggplot() +
+    geom_line(
+      aes(
+        x = year,
+        y = running_mean,
+        color = Scenario,
+        linetype = SSP
+      ),
+      alpha = 0.5
+    ) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+    labs(x = "Year",
+         y = "Relative Change (%)") +
+    facet_grid(facet~ commercial_group) +
+    ggtheme_p(
+      leg_pos = "right",
+      ax_tx_s = 8,
+      hjust = 0.5
+    ) +
+    scale_x_continuous(limits = c(2020,2100)) +
+    scale_color_manual(values = scenario_pallet)
+
+
+ggsave(filename = "../results/figures/scen_trend_commercial.png", 
+         plot = last_plot(),
+         width = 12,
+         height = 6)
+
+```
+
+
+## Delta map
+
+```{r}
+# Analysis
+  
+  commercial_results_df <- commercial_results %>%
+    group_by(year,variable,ssp,scen,index,lat,lon,commercial_group) %>% 
+    summarise(
+      total_value = sum(mean_value,na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    mutate(
+      period = ifelse(year %in% seq(1995,2014,1),"history",
+                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
+    ) %>% 
+    filter(!is.na(period)) %>% 
+    group_by(variable,scen,ssp,period,index,lat,lon,commercial_group) %>% 
+    summarise(
+      mean_variable = mean(total_value, na.rm = T),
+      .groups = "drop"
+    ) %>% 
+    group_by(variable,scen,ssp,index,Latitude = lat,Longitude = lon,commercial_group) %>% 
+      spread(period,mean_variable) %>% 
+    mutate(
+      history = replace_na(history,0),
+      mid = replace_na(mid,0),
+      relative_mean = ifelse(history == 0 & mid > 0,100,
+                             ifelse(mid == 0 & history > 0,-100,
+                                    ((mid-history)/history)*100)
+                             ),  
+      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
+      SSP = ifelse(ssp == 26,"126","585"),
+      Scenario = scen,
+      relative_mean = ifelse(relative_mean > 100, 100,
+                             ifelse(relative_mean < -100, -100,
+                                    relative_mean)
+                             )
+    ) 
+
+
+commercial_list <- unique(commercial_results_df$commercial_group)
+
+for(i in 1:5){
+  
+  commercial_results_df %>%
+    filter(commercial_group %in% commercial_list[i]) %>% 
+    ggplot() +
+    geom_tile(
+      aes(
+        x = Longitude,
+        y = Latitude,
+        fill = relative_mean
+      )
+    ) +
+    facet_grid(ssp~variable + scen) +
+    # scale_fill_gradient2("Relative Change (%)") +
+      scale_fill_gradient2(low = "red", mid = "yellow", high = "blue", midpoint = 0) +
+    MyFunctions::my_land_map() +
+    geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "black", size = 3) +
+    coord_sf(
+      xlim = c(-93,-83),
+      ylim = c(0,10)
+    ) +
+    ggtheme_m(
+      facet_tl_s = 8,
+      hjust = 0.5,
+      ax_tx_s = 8,
+      ax_tl_s = 10,
+      leg_tl_s = 10,
+      leg_tx_s = 8
+      
+      ) 
+  
+  ggsave(filename = paste0("../results/figures/scenario_delta_map_",commercial_list[i],".png"),
+         plot = last_plot(),
+         width = 12,
+         height = 6)
+  
+}
+
+```
+
+
 # Results per speices
 
 ## Line trands of percentage change per scenario
@@ -404,6 +570,7 @@ lapply(spp_list$taxon_key, map_scen_delta, data = dbem_runs, data_path = data_pa
 lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_path)
 
 ```
+
 
 
 
