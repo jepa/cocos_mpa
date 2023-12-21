@@ -443,8 +443,6 @@ box_delta_status <- function(data,taxon = NA,data_path){
       leg_pos = "right"
     ) 
   
-  ---
-  
   
   # Analysis
   df <- partial_df %>% 
