@@ -202,7 +202,8 @@ map_scen_delta <- function(data, taxon = NA, data_path){
   
   
   # Analysis
-  fig <- partial_df %>%
+  fig <-
+    partial_df %>%
     group_by(year,variable,ssp,scen,index,lat,lon) %>% 
     summarise(
       total_value = sum(mean_value,na.rm = T),
@@ -219,13 +220,23 @@ map_scen_delta <- function(data, taxon = NA, data_path){
       .groups = "drop"
     ) %>% 
     group_by(variable,scen,ssp,index,Latitude = lat,Longitude = lon) %>% 
+      spread(period,mean_variable) %>% 
     mutate(
-      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
+      history = replace_na(history,0),
+      mid = replace_na(mid,0),
+      relative_mean = ifelse(history == 0 & mid > 0,100,
+                             ifelse(mid == 0 & history > 0,-100,
+                                    ((mid-history)/history)*100)
+                             ),  
       variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
       SSP = ifelse(ssp == 26,"126","585"),
-      Scenario = scen
+      Scenario = scen,
+      relative_mean = ifelse(relative_mean > 100, 100,
+                             ifelse(relative_mean < -100, -100,
+                                    relative_mean)
+                             )
     ) %>% 
-    filter(period == "mid") %>% 
+    # filter(period == "mid") %>% 
     ggplot() +
     geom_tile(
       aes(
@@ -235,7 +246,8 @@ map_scen_delta <- function(data, taxon = NA, data_path){
       )
     ) +
     facet_grid(scen ~ SSP + variable) +
-    scale_fill_gradient2("Relative Change (%)") +
+    # scale_fill_gradient2("Relative Change (%)") +
+      scale_fill_gradient2(low = "red", mid = "yellow", high = "blue", midpoint = 0) +
     MyFunctions::my_land_map() +
     geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "black", size = 3) +
     coord_sf(
