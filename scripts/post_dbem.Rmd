@@ -409,10 +409,41 @@ lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_
 
 # De-Bugging
 
+# Issue 8
+
+
+**Issue:** Some delta maps are giving an issue on mutate for 601906 690206 690433
+**Fix:**
+
+```{r}
+
+# 601906 Bluefin trevally	
+# 690206 Jumbo flying squid	
+# 690433 Western white shrimp	
+
+
+
+# Check runs
+dbem_runs %>% 
+  filter(taxon_key %in% c(601906, 690206, 690433)) %>% 
+  pull(taxon_key) %>%
+  unique() #only runs for 690619
+
+MyFunctions::my_data("sau_species") %>% 
+  filter(taxon_key %in% c(601906, 690206, 690433))
+
+
+
+
+
+```
+
+
+
 # Issue 7 (Fixed)
 
 Issue: Some species not running while running trend figure
-Fix: Species are not actually modeled, removed from list
+Fix: Problem with no data in the future vs data in the past when computing percentage change
 
 
 ```{r}
