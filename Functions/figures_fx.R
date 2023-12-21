@@ -263,7 +263,7 @@ map_scen_delta <- function(data, taxon = NA, data_path){
 }
 
 
-box_delta_status <- function(data,taxon = NA,data_path){
+box_delta_scen <- function(data,taxon = NA,data_path){
   
   if(!is.na(taxon)) {
     # Global variables
