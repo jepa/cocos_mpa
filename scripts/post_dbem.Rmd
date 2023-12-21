@@ -390,12 +390,12 @@ lapply(spp_list$taxon_key, trend_scen_fig, data = dbem_runs, data_path = data_pa
 lapply(spp_list$taxon_key, trend_status_fig, data = dbem_runs, data_path = data_path)
 
 ```
+
 ## Delta map
 
 ```{r}
-lapply("601906", map_scen_delta, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, map_scen_delta, data = dbem_runs, data_path = data_path)
 
-# issues spp 601906 690206 690433
 ```
 ## Delta box plots
 
@@ -412,7 +412,7 @@ lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_
 # Issue 7 (Fixed)
 
 Issue: Some species not running while running trend figure
-Fix: Species are not actually modelled, removed from list
+Fix: Species are not actually modeled, removed from list
 
 
 ```{r}
@@ -434,5 +434,54 @@ test_list <- project_species_list %>%
 ```
 
 
+# Issue 6
 
+
+**Issue:** Some of the species figures are not showing all grid cells.
+
+**Fix:** Species initial distribution is very limited relative to the MPAs. NO fix but warning of results
+
+
+```{r}
+
+# 602534 Bigeye thresher (Minimal distribution ariund MPAs)
+# 601917 Bigeye trevally (Same)
+# 600382 Yellowtail amberjack (Same)
+# 690433 Western white shrimp (Same)
+
+tax_test <- 601917
+
+dbem_runs %>% 
+  filter(taxon_key == tax_test) %>% 
+  pull(status) %>% unique() # [1] "protected" "open"
+
+
+# Function taken from distribution fx
+  readr:: read_csv(paste0("~/Library/CloudStorage/OneDrive-UBC/Data/dbem/def_distributions/S",tax_test,".csv"), 
+                              col_names = FALSE) %>% 
+    bind_cols(MyFunctions::my_data("dbem_coords")) %>% 
+    filter(X1 > 0) %>% 
+    ggplot() +
+    geom_sf(data = rnaturalearth::ne_countries(scale = "small", returnclass = c("sf")), aes()) +
+    geom_tile(
+      aes(
+        x = lon,
+        y = lat,
+        fill = X1
+      )
+    ) +
+    scale_fill_viridis_b() +
+    ggtitle(paste("Def. distribution for",tax_test)) +
+    geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "black", size = 3) +
+    coord_sf(
+      xlim = c(-93,-83),
+      ylim = c(0,10)
+    )
+
+  
+  
+  
+  
+  
+```
 
