@@ -212,27 +212,6 @@ scen_grid <-
   # mutate(status = ifelse(status != "protected","unprotected",status))
 
 
-# Species list
-spp_list <-  readr::read_csv("../data/species/project_species_list.csv") %>% 
-  filter(!taxon_key %in% c(600218)) %>%  # remove taxa
-  slice(1)
-
-
-
-# Test labels
-
-# ggplot(scen_grid) +
-#   geom_tile(
-#     aes(
-#       x = lon,
-#       y = lat,
-#       fill = status
-#     )
-#   ) +
-#   facet_wrap(~scen) +
-#   geom_sf(data = ammb_sf %>% mutate(layer = "ammb"), aes(color = layer), fill = "transparent") +
-#   geom_sf(data = coco_sf %>% mutate(layer = "cocos"), aes(color = layer), fill = "transparent") +
-#   scale_color_viridis_d()
 
 dbem_runs <- bind_rows(
   read_csv(paste0(data_path,"/results/dbem_runs_abd.csv")),
@@ -242,6 +221,14 @@ dbem_runs <- bind_rows(
 
 head(dbem_runs)
 
+spp_list <- dbem_runs %>% 
+  filter(!taxon_key %in% c(600218)) %>%  
+  group_by(taxon_key) %>% 
+  tally() %>% 
+  left_join(MyFunctions::my_data("sau_species")) %>% 
+  select(-n,-genus,-species)
+
+write_csv(spp_list,"../data/species/project_species_list.csv")
 
 ```
 
@@ -406,8 +393,9 @@ lapply(spp_list$taxon_key, trend_status_fig, data = dbem_runs, data_path = data_
 ## Delta map
 
 ```{r}
-lapply(spp_list$taxon_key, map_scen_delta, data = dbem_runs, data_path = data_path)
+lapply("601906", map_scen_delta, data = dbem_runs, data_path = data_path)
 
+# issues spp 601906 690206 690433
 ```
 ## Delta box plots
 
@@ -416,3 +404,35 @@ lapply(spp_list$taxon_key, map_scen_delta, data = dbem_runs, data_path = data_pa
 lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_path)
 
 ```
+
+
+
+# De-Bugging
+
+# Issue 7 (Fixed)
+
+Issue: Some species not running while running trend figure
+Fix: Species are not actually modelled, removed from list
+
+
+```{r}
+
+# Check runs
+dbem_runs %>% 
+  filter(taxon_key %in% c("600216", "600753", "600912", "690032", "600218")) %>% 
+  pull(taxon_key) %>%
+  unique() #only runs for 690619
+
+MyFunctions::my_data("sau_species") %>% 
+  filter(taxon_key %in% c("600216", "600753", "600912", "690032", 690619))
+
+# Blue marlin, Longfin mako, Scalloped hammerhead, and Atlantic seabob 
+
+test_list <- project_species_list %>% 
+  filter(!taxon_key %in% c("600216", "600753", "600912", "690032","600218")) 
+
+```
+
+
+
+
