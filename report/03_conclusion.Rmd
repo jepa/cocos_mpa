@@ -8,4 +8,12 @@ output:
 
 # Conclusions
 
-... Sarah Heeeeeeeeeeelp!!!!
+- On aggregate, a combination of protected area and limited IUU fishing (i.e a conservation inclined scenario) will result in less losses in biomass by the middle of the 21st century. 
+
+- On aggregate, protected area and limited IUU fishing (i.e a conservation inclined scenario) do not influence maximum catch potential (MCP)
+
+- On a species level, both sharks & rays and tunas & billfishes are expected to decrease in abundance (and MCP), and perch-likes are expected to decrease in abundance but not MCP. 
+
+- At a species level, a combination of protected area and limited IUU fishing (i.e a conservation inclined scenario) will lead to more biomass and MCP, although only slightly. 
+
+- Climate change mitigation will have a large impact on biomass and MCP loss in the area. 
