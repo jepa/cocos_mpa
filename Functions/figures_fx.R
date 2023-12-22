@@ -219,7 +219,7 @@ map_scen_delta <- function(data, taxon = NA, data_path){
       mean_variable = mean(total_value, na.rm = T),
       .groups = "drop"
     ) %>% 
-    group_by(variable,scen,ssp,index,Latitude = lat,Longitude = lon) %>% 
+    # group_by(variable,scen,ssp,index,Latitude = lat,Longitude = lon) %>% 
       spread(period,mean_variable) %>% 
     mutate(
       history = replace_na(history,0),
@@ -269,7 +269,7 @@ box_delta_scen <- function(data,taxon = NA,data_path){
     # Global variables
     taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
     # Figure names
-    fig_name_a <- paste0(data_path,"results/figures/scenario_status_delta_box/",taxon_name %>% str_replace(" ", "_"),"_status_scen_delta_box.png")
+    fig_name_a <- paste0(data_path,"results/figures/status_delta_box/",taxon_name %>% str_replace(" ", "_"),"_status_delta_box.png")
     fig_name_b <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
     # Verbantim
     print(paste("Creating plot for",taxon_name,"(",taxon,")"))
@@ -307,14 +307,22 @@ box_delta_scen <- function(data,taxon = NA,data_path){
       mean_variable = mean(total_value, na.rm = T),
       .groups = "drop"
     ) %>% 
-    group_by(variable,scen,ssp,status,index) %>% 
+    spread(period,mean_variable) %>% 
     mutate(
-      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
+      history = replace_na(history,0),
+      mid = replace_na(mid,0),
+      relative_mean = ifelse(history == 0 & mid > 0,100,
+                             ifelse(mid == 0 & history > 0,-100,
+                                    ((mid-history)/history)*100)
+      ),  
       variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
       SSP = ifelse(ssp == 26,"126","585"),
-      Scenario = scen
-    ) %>% 
-    filter(period == "mid")
+      Scenario = scen,
+      relative_mean = ifelse(relative_mean > 100, 100,
+                             ifelse(relative_mean < -100, -100,
+                                    relative_mean)
+      )
+    ) 
   
   
   # Snceario + status
@@ -367,136 +375,6 @@ box_delta_scen <- function(data,taxon = NA,data_path){
   
 }
 
-
-## Weighted box plot
-
-box_delta_status <- function(data,taxon = NA,data_path){
-  
-  if(!is.na(taxon)) {
-    # Global variables
-    taxon_name <- spp_list %>% filter(taxon_key %in% taxon) %>% pull(common_name)
-    # Figure names
-    fig_name_a <- paste0(data_path,"results/figures/scenario_status_delta_box/",taxon_name %>% str_replace(" ", "_"),"_status_scen_delta_box.png")
-    fig_name_b <- paste0(data_path,"results/figures/scenario_delta_box/",taxon_name %>% str_replace(" ", "_"),"_scen_delta_box.png")
-    # Verbantim
-    print(paste("Creating plot for",taxon_name,"(",taxon,")"))
-    
-    partial_df <- data %>%
-      filter(taxon_key %in% taxon)
-    
-  }else{
-    
-    # Verbantim
-    print("Creating plot for all taxa aggregated")
-    
-    # figure name
-    fig_name_a <- paste0("results/figures/status_scen_delta_box.png")
-    fig_name_b <- paste0("results/figures/scenario_delta_box.png")
-    
-    partial_df <- data
-  }
-  
-  # Estimate ammount of grids
-  n_status <- scen_grid %>% 
-    group_by(status,scen) %>% 
-    tally()
-  
-  
-  partial_df %>% 
-    group_by(index,year,ssp,scen,status,variable) %>% 
-    summarise(
-      total_value = sum(mean_value,na.rm = T),
-      .groups = "drop"
-    ) %>% 
-    mutate(
-      period = ifelse(year %in% seq(1995,2014,1),"history",
-                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
-    ) %>% 
-    filter(!is.na(period)) %>% 
-    # group_by(variable,scen,ssp,period,status,index) %>% 
-    # summarise(
-      # mean_variable = mean(total_value, na.rm = T),
-      # .groups = "drop"
-    # ) %>% 
-    left_join(n_status,
-              by = c("status","scen")
-    ) %>% 
-    mutate(value_wgt = total_value/n,
-      relative_mean = (value_wgt - value_wgt[period == "history"])/abs(value_wgt[period == "history"])*100,
-      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
-      SSP = ifelse(ssp == 26,"126","585"),
-      Scenario = scen,
-      relative_mean = ifelse(relative_mean > 100, 100,relative_mean)
-    ) %>% 
-    ggplot() +
-    geom_boxplot(
-      aes(
-        x = SSP,
-        y = relative_mean,
-        fill = Scenario
-      )
-    ) +
-    labs(y = "Relative change (%)") +
-    facet_grid(status~variable, scales = "free") +
-    scale_fill_manual(values = scenario_pallet) +
-    ggtheme_p(
-      leg_pos = "right"
-    ) 
-  
-  
-  # Analysis
-  df <- partial_df %>% 
-    group_by(year,variable,ssp,scen,status,index) %>% 
-    summarise(
-      total_value = sum(mean_value,na.rm = T),
-      .groups = "drop"
-    ) %>% 
-    mutate(
-      period = ifelse(year %in% seq(1995,2014,1),"history",
-                      ifelse(year %in% seq(2030,2049,1),"mid",NA))
-    ) %>% 
-    filter(!is.na(period)) %>% 
-    group_by(variable,scen,ssp,period,status,index) %>% 
-    summarise(
-      mean_variable = mean(total_value, na.rm = T),
-      .groups = "drop"
-    ) %>% 
-    group_by(variable,scen,ssp,status,index) %>% 
-    mutate(
-      relative_mean = (mean_variable - mean_variable[period == "history"])/abs(mean_variable[period == "history"])*100,
-      variable = ifelse(variable == "Abd","Abundance","Maximum Catch Potential"),
-      SSP = ifelse(ssp == 26,"126","585"),
-      Scenario = scen
-    ) %>% 
-    filter(period == "mid")
-  
-  
-  # Snceario + status
-  fig <-
-    df %>% 
-    ggplot() +
-    geom_boxplot(
-      aes(
-        x = SSP,
-        y = relative_mean,
-        fill = Scenario
-      )
-    ) +
-    labs(y = "Relative change (%)") +
-    facet_grid(status~variable, scales = "free") +
-    scale_fill_manual(values = scenario_pallet) +
-    ggtheme_p(
-      leg_pos = "right"
-    ) 
-  
-  
-  
-  ggsave(filename = fig_name, 
-         plot = fig,
-         width = 8,
-         height = 8)
-  
-}
 
 # ------------------------------------------------------ #
 # Themes
