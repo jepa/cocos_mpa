@@ -8,8 +8,8 @@ output:
     toc: no # change me to yes if rendering to Word
     keep_tex: no
     number_sections: yes
-    fig_width: 6
-    fig_height: 4
+    # fig_width: 6
+    # fig_height: 4
     latex_engine: xelatex
 header-includes:
    - \usepackage{ragged2e}
@@ -32,6 +32,8 @@ options(knitr.duplicate.label = 'allow')
 # These libraries are only needed for examples in the introduction 
 library("png")
 library("grid")
+library("kableExtra")
+library("tidyverse")
 
 ```
 
@@ -47,5 +49,10 @@ In this project we set to understand the role of Cocos National Park (PNC) and t
 
 <!-- Methods -->
 
-```{r Results, child = '01_methods.Rmd', eval = T}
+```{r Results, child = '02_results.Rmd', eval = T}
+```
+
+<!-- Conclusion -->
+
+```{r Conclusion, child = '03_conclusion.Rmd', eval = T}
 ```

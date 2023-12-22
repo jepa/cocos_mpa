@@ -118,17 +118,20 @@ grid.raster(img)
  
 ## Species
 
-The current analysis explored the impacts of climate change on 42 species that occur in the Eastern Tropical Pacific ([See Species List on GitHub repository](https://github.com/jepa/cocos_mpa/blob/main/data/species/project_species_list.csv).
+The current analysis explored the impacts of climate change on 38 species that occur in the Eastern Tropical Pacific ([See Species List on GitHub repository](https://github.com/jepa/cocos_mpa/blob/main/data/species/project_species_list.csv).
+
+```{r spp_list, eval = F, echo = F}
+read_csv("../data/species/project_species_list.csv") %>% 
+  kbl(caption = "Table 1. List of species included in this report")
+```
+
 
 ## Code and Data
 
-All of the data analysis and statistics were completed with the statistical software R version 4.3.1 (2023-06-16) and can be found at github.com/jepa/cocos_mpa. Data for this project can be downloaded from [this repository](link to data).
+All of the data analysis and statistics were completed with the statistical software R version 4.3.1 (2023-06-16) and can be found at github.com/jepa/cocos_mpa. Data for this project can be downloaded from [this repository](https://ubcca-my.sharepoint.com/:f:/g/personal/jepa88_student_ubc_ca/ErdLryE-_L1IjeSlVoPBSxYBIPFX-DU5ztjnO8DWBfRRqg?email=t.clarke%40oceans.ubc.ca&e=u73Rkb).
 
 
-## Caveats (Incoplete)
+## Caveats
 
-- DBEM does not include species interactions, potential evolutionary adaptation, and is subjected to the original data from which the model distribution was made (Link to distribution plots).
-- Spatial scale 
-- Fishing effort is redistributed proportionally, in reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling exercises that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change. 
-
+There are a few caveats to this report that are important to take into consideration when reading the results. First, the DBEM is a mechanistic species distribution model, thus, it does not take into consideration species interactions, species potential evolutionary adaptation trough space and time, nor any other human-induced effect (e.g., mining, shipping, pollution). Second, as any mathematical model, the DBEM is subjected to the original input data (See report Data folder, *distributions*) including resolution and distribution. The outputs from the ESMs are produced at a 1 degree Lat x Long resolution and further downscaled to 0.5 degrees to match the DBEM resolution. Yet, such resolution might not be coerce enough to capture local (coastal) processes that are affecting the ecosystem around PNC and AMM. Such element in combination with the small size of the MPA, especially cocos which represents 15 complete grid-cells and 9 partial cells, creates a substantial level of uncertainty in the projections. Third, fishing effort is redistributed proportionally around the grid-cells that are closed to fishing. In reality, it is possible that such effort is not proportionally distributed around the no-take MPA but rather localized in some areas, or not re-distributed at all. Other modelling exercises that incorporate different mechanisms in which fishing effort is re-allocated around a no-take MPA could help illuminate how social and economic factors related to fishing may affect the contribution of MPAs under climate change. For these reason, the results presented here, even at their most aggregated level, should be interpreted as an example of what could happen to the region, rather than definite predictions of what will happen to each stock of the Easter Tropical Pacific under climate change. Replicating the analysis here with finer-scale models (e.g., Regional Ocean Modeling System - ROMS) and data (if existent) would help validate the DBEM while also producing more reliable results. 
 

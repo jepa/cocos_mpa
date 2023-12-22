@@ -251,7 +251,13 @@ spp_list <- dbem_runs %>%
 
 sau_commercial_groups <- my_path("G", extra_path = "SAU", name = "sau_spp_commercial_group.csv", read = T)
 
-spp_list %>% filter(taxon_key %in% remove_spp) %>% View()
+spp_list %>% left_join(sau_commercial_groups) %>% View()
+
+# Final results
+
+dbem_runs <- dbem_runs %>% 
+  filter(!taxon_key %in% remove_spp)
+
 
 ```
 
@@ -573,7 +579,7 @@ ggsave(filename = "../results/figures/scen_trend_commercial.png",
 
 commercial_list <- unique(commercial_results_df$commercial_group)
 
-for(i in 1:5){
+for(i in 1:length(commercial_list)){
   
   commercial_results_df %>%
     filter(commercial_group %in% commercial_list[i]) %>% 
@@ -670,7 +676,7 @@ commercial_results %>%
   ) +
   labs(y = "Relative change (%)") +
   facet_wrap(variable~commercial_group,
-             ncol = 5,
+             ncol = 4,
              scales = "free") +
   scale_fill_manual(values = scenario_pallet) +
   ggtheme_p(
@@ -711,15 +717,14 @@ lapply(spp_list$taxon_key, trend_status_fig, data = dbem_runs, data_path = data_
 lapply(spp_list$taxon_key, map_scen_delta, data = dbem_runs, data_path = data_path)
 
 ```
+
 ## Delta box plots
 
 ```{r}
 
-lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_path)
+lapply(spp_list$taxon_key, box_delta_scen, data = dbem_runs, data_path = data_path)
 
 ```
-
-
 
 
 # De-Bugging
@@ -730,7 +735,7 @@ lapply(spp_list$taxon_key, box_delta_status, data = dbem_runs, data_path = data_
 **Issue:** Some delta maps are giving an issue on mutate for 601906 690206 690433
 **Fix:**
 
-```{r}
+```{r issue_8 eval = F}
 
 # 601906 Bluefin trevally	
 # 690206 Jumbo flying squid	
@@ -761,7 +766,7 @@ Issue: Some species not running while running trend figure
 Fix: Problem with no data in the future vs data in the past when computing percentage change
 
 
-```{r}
+```{r issue_7 eval = F}
 
 # Check runs
 dbem_runs %>% 
@@ -788,7 +793,7 @@ test_list <- project_species_list %>%
 **Fix:** Species initial distribution is very limited relative to the MPAs. NO fix but warning of results
 
 
-```{r}
+```{r issue_6 eval = F}
 
 # 602534 Bigeye thresher (Minimal distribution ariund MPAs)
 # 601917 Bigeye trevally (Same)
