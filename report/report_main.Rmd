@@ -1,6 +1,7 @@
 ---
 title: "Report for project: Climate change and fisheries on the Parque Nacional de Cocos, Costa Rica"
-authors: "Juliano Palacios Abrantes and Sarah M. Roberts"
+subtitle: "Juliano Palacios Abrantes and Sarah M. Roberts"
+author: "Correspondence: j.palacios@ocena.ubc.ca"
 date: "`r format(Sys.time(), '%B, %Y')`"
 output:
   bookdown::pdf_book: # comment when rendering to word document
@@ -20,6 +21,7 @@ header-includes:
    - \usepackage{wrapfig}
    - \usepackage{pdfpages}
    - \usepackage{caption} # allows setting caption width for tables
+# bibliography: references.bib
 ---
 
 
