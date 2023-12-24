@@ -240,14 +240,15 @@ map_scen_delta <- function(data, taxon = NA, data_path){
     ggplot() +
     geom_tile(
       aes(
-        x = Longitude,
-        y = Latitude,
+        x = lon,
+        y = lat,
         fill = relative_mean
       )
     ) +
     facet_grid(scen ~ SSP + variable) +
-    # scale_fill_gradient2("Relative Change (%)") +
-      scale_fill_gradient2(low = "red", mid = "yellow", high = "blue", midpoint = 0) +
+    labs(x = "Longitude",
+           y = "Latitude") +
+      scale_fill_gradient2("Relative Change (%)", low = "red", mid = "yellow", high = "blue", midpoint = 0) +
     MyFunctions::my_land_map() +
     geom_sf(data = ammb_sf, aes(), fill = "transparent", color = "black", size = 3) +
     coord_sf(

@@ -219,7 +219,7 @@ dbem_runs <- bind_rows(
 ) %>% 
   filter(index %in% scen_grid$index)
 
-head(dbem_runs)
+# head(dbem_runs)
 
 remove_spp <- c(
   600218,
@@ -251,7 +251,7 @@ spp_list <- dbem_runs %>%
 
 sau_commercial_groups <- my_path("G", extra_path = "SAU", name = "sau_spp_commercial_group.csv", read = T)
 
-spp_list %>% left_join(sau_commercial_groups) %>% View()
+# spp_list %>% left_join(sau_commercial_groups) %>% View()
 
 # Final results
 
