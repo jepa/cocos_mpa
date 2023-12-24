@@ -16,7 +16,7 @@ In this project we set to understand the role of *Cocos National Park* (PNC) and
 According to our results, aggregated fish biomass and MCP will both see an overall decline in the study area throughout the $21^{st}$ century, regardless of the climate change and management scenario. This suggests that MPAs alone do not have the capacity to counteract the negative effects of climate change in the region (Figure \@ref(fig:linetrend)). However, differences exist between scenarios. Our projections show that Scenario S1 will loose less biomass and MCP than other scenarios throughout the $21^{st}$ century. This suggests that the extra protection that this scenario provides (no fishing within cocos MPA) in combination with proper fisheries management (i.e., $F=F_{msy}$ in areas where fishing is allowed) provides a buffer against the negative impacts of climate change (Figure \@ref(fig:linetrend)). On the other hand, Scenario S3, which is the least protective of all (90% of cocos under no fishing) and has the highest level of over fishing (i.e., fishing outside the Cocos polygon is $F=F_{msy}*1.5$) is projected to have the largest losses due to climate change.
 
 
-```{r linetrend, eval = T, echo = T, fig.width = 10, fig.height = 7,fig.keep='high', echo=FALSE, fig.cap="Trend of change in biomass relative to the historical period color-coded by management scenario and SSP (linetype). Ten years tunning average."}
+```{r linetrend, eval = T, echo = T, fig.width = 10, fig.height = 7,fig.keep='high', echo=FALSE, fig.cap="Trend of change in biomass relative to the historical period color-coded by management scenario and SSP (linetype). Ten years running average."}
 
 # Call the image
 img <- readPNG("../results/figures/scen_trend.png")
@@ -27,7 +27,7 @@ grid.raster(img)
 
 The difference between scenarios is substantial in terms of biomass by the middle of the $21^{st}$ century (Figure \@ref(fig:deltabox)). Here, Scenario S1 will loose significantly less biomass than scenarios S2 and S3 who present no significant difference between them. This pattern is the same for both SSPs as is to be expected since SSP trajectories do not vary much before 2050. Interestingly, the reduced biomass loss does not translate to MCP as the scenarios are not significantly different to each other. 
 
-```{r deltabox, eval = T, echo = T, fig.width = 10, fig.height = 7,fig.keep='high', echo=FALSE, fig.cap="Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis"}
+```{r deltabox, eval = T, echo = T, fig.width = 10, fig.height = 7,fig.keep='high', echo=FALSE, fig.cap="Abundance and MCP change by grid-cells by 2050 relative to the baseline. Management Scenarios color coded. Median marked as a horizontal black line in boxplot; box represents the IQR distribution and vertical lines IQR * 1.5;  black dots represent outliers"}
 
 # Call the image
 img <- readPNG("../results/figures/scenario_delta_box.png")
@@ -38,7 +38,7 @@ grid.raster(img)
 
 Spatially speaking, by the $21^{st}$ century, Scenario S1 shows areas with positive changes in biomass (up to 5%) relative to the historical time period (Figure \@ref(fig:deltamap)). Such regions are located around the northern and southern boundaries of the MPAs. There is no evident difference in the regions within the MPAs across scenarios except for the fully protected grids within Cocos MPA ((Figure \@ref(fig:deltamap), Abundance). This pattern is likely due to a higher level of biomass at the beginning of the experiment for these regions that are not effectively protected by the MPA under climate change, hence they see a larger reduction. 
 
-```{r deltamap, eval = T, echo = T, fig.width = 6, fig.height = 6,fig.keep='high', echo=FALSE, fig.cap="Coco MPA in blue and AMMB area in red over DBEM grid cells (light blue) included in the analysis"}
+```{r deltamap, eval = T, echo = T, fig.width = 6, fig.height = 6,fig.keep='high', echo=FALSE, fig.cap="Spatial distribution of abundance and MCP change in each grid-cell by 2050 relative to the baseline. White areas in MCP maps represent no-catch"}
 
 # Call the image
 img <- readPNG("../results/figures/scenario_delta_map.png")
@@ -52,7 +52,7 @@ grid.raster(img)
 We also looked at the projections based on the protection category of grid cell: *protected* for grid cells containing an MPA, *surrounding* for those immediately adjacent to a protected grid cell and *open* for the rest of grid cells (Figure \@ref(fig:deltabox)). For the *open* ocean, abundance on S1 is significantly less reduced than the other two scenarios, whereas for MCP this is only true under SSP 126 (Figure \@ref(fig:deltabox), *open*). Most *protected* grids will see a decrease in biomass with Scenario S1 presenting the least reduction in both SSPs (Figure \@ref(fig:deltabox), *protected*). Inversely, for MCP, the difference between scenarios is less clear. Finally, the spill-over effect from *protected* grid cells becomes evident as the relative change in abundance of *surrounding* cells is substantially lower in Scenario S1 than the other scenarios (Figure \@ref(fig:deltabox), *surrounding*). This is likely supported by the fishing management status of the scenario S1 (i.e., $F = F_{msy}$) that allows for a sustainable harvest. For MCP this effect is only seen if emissions are mitigated (SSP 126) suggesting that fisheries could benefit from the spill-over effect of these protected areas. Under SSP 585, however, the effect is not different between scenarios as the effects of climate change are too strong for the management or cell status to be influential.
 
 
-```{r deltabox, eval = T, echo = T, fig.width = 10, fig.height = 10,fig.keep='high', echo=FALSE, fig.cap=""}
+```{r deltabox, eval = T, echo = T, fig.width = 10, fig.height = 10,fig.keep='high', echo=FALSE, fig.cap="Abundance and MCP change in each grid-cells by 2050 relative to the baseline. Results presented by typer of grid-cell (open, protected and surroundg). Management Scenarios color coded. Median marked as a horizontal black line in boxplot; box represents the IQR distribution and vertical lines IQR * 1.5;  black dots represent outliers"}
 
 # Call the image
 img <- readPNG("../results/figures/status_scen_delta_box.png")
@@ -65,11 +65,11 @@ grid.raster(img)
 
 ## By commercial group
 
-We grouped the species into four different commercial groups according to the Sea Around Us: perch-likes (*n* = 5), sharks and rays (*n* = 8), tunas and billfishes (*n* = 9) and other fishes (*n* = 2). While this approach provides a more de-aggregated perspective and mitigates some of the uncertainties related to the species-level analysis,it still retains a considerable degree of uncertainty and offers insights into potential trajectories for each group under climate change, rather than definitive outcomes.
+While this approach provides a more de-aggregated perspective and mitigates some of the uncertainties related to the species-level analysis,it still retains a considerable degree of uncertainty and offers insights into potential trajectories for each group under climate change, rather than definitive outcomes.
 
 Overall, all four groups are projected to lose abundance in the region, regardless of the climate change or management scenario with SSP 126 resulting in less change than SSP 585 for all groups (Figure \@ref(fig:scen_trend_commercial)). Scenario 1, where cocos is 100% protected, results in the best outcome for all commercial groups while Scenario 3, where no area is 100% closed to fishing, results in the worst outcome. The small difference between scenarios can be seen as evidence of no real impact of having areas completely closed; however, the fact that Scenario 1 outperforms the others in every commercial group suggests that there is a benefit to having areas closed and that the model is not detailed enough to truly capture what that difference really is. One interesting pattern worth highlighting is the apparent decrease in abundance of Perch-like species contrasting the increase in MCP (Figure \@ref(fig:scen_trend_commercial)-*Perch-likes*). This contradicting pattern could be explained because the MPAs create higher biomass for these species at the beginning of the study period and thus they are highly impacted by climate change. 
 
-```{r scen_trend_commercial, eval = T, echo = T, fig.width = 14, fig.height = 12,fig.keep='high', echo=FALSE, fig.cap=""}
+```{r scen_trend_commercial, eval = T, echo = T, fig.width = 14, fig.height = 10, fig.keep='high', echo=FALSE, fig.cap="Trend of change in biomass relative to the historical period by commercial group color-coded by management scenario and SSP (linetype). Ten years running average."}
 
 # Call the image
 img <- readPNG("../results/figures/scen_trend_commercial.png")
@@ -83,7 +83,7 @@ grid.raster(img)
 When comparing the mid of the 21st century relative to today, we can see that all but Perch-likes seem to be negatively impacted by climate change (Figure \@ref(fig:scenario_delta_box_commercial)). Indeed Perch-like species are projected to see a small-to-no-change increase under SSP 126 and an increase under SSP 585 with no difference across Scenarios. On the other hand, both sharks & rays and tunas & billfishes are expected to decrease in abundance (and MCP). For these groups, however, there is a significant difference between the Scenario 1 and the other two in all cases but MCP for tunas & billfishes.
 
 
-```{r scenario_delta_box_commercial, eval = T, echo = T, fig.width = 14, fig.height = 10,fig.keep='high', echo=FALSE, fig.cap=""}
+```{r scenario_delta_box_commercial, eval = T, echo = T, fig.width = 14, fig.height = 10,fig.keep='high', echo=FALSE, fig.cap="Abundance and MCP change by grid-cells by 2050 relative to the baseline for each commercial group. Management Scenarios color coded. Median marked as a horizontal black line in boxplot; box represents the IQR distribution and vertical lines IQR * 1.5;  black dots represent outliers"}
 
 # Call the image
 img <- readPNG("../results/figures/scenario_delta_box_commercial.png")
@@ -95,7 +95,7 @@ grid.raster(img)
 
 The spread of the changing impacts across the region is relative homogeneous across commercial groups (Figure \@ref(fig:commercial_map)). In most cases there will be no change-to-small-decreases (e.g., from 0 to -10$) in abundance across the region. Scenario 1 shows less abundance impacts for Sharks & rays and tunas & billfishes than the other two scenarios, while Perch-like species seem to have no difference between scenarios. 
 
-```{r commercial_map, eval = T, echo = T, fig.width = 10, fig.height = 14,fig.keep='high', echo=FALSE, fig.cap=""}
+```{r commercial_map, eval = T, echo = T, fig.width = 10, fig.height = 14,fig.keep='high', echo=FALSE, fig.cap="Spatial distribution of abundance and MCP change by commercial group in each grid-cell by 2050 relative to the baseline. White areas in MCP maps represent no-catch"}
 
 # Call the image
 img <- readPNG("../results/figures/commercial_map.png")
