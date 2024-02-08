@@ -1,6 +1,6 @@
 ---
 title: "Report for project: Climate change and fisheries on the Parque Nacional de Cocos, Costa Rica"
-subtitle: "Juliano Palacios Abrantes and Sarah M. Roberts"
+subtitle: "Juliano Palacios Abrantes, Sarah M. Roberts and Tayler M. Clarke"
 author: "Correspondence: j.palacios@oceans.ubc.ca"
 date: "`r format(Sys.time(), '%B, %Y')`"
 output:
