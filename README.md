@@ -1,3 +1,5 @@
+*As of Arpil 1st of 2024 this repostiry has been archived as the project is concluded*
+
 # Climate change and fisheries on the Parque Nacional de Cocos, Costa Rica
 Repository for project on Isla Cocos and Bicentenario in Costa Rica with MarViva
 
